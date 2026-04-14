@@ -4,7 +4,7 @@ Development utilities for the `y-octo` CRDT library: binary compatibility tests,
 
 ## Layout
 
-```
+```text
 src/
   lib.rs                         # Module exports (doc, codec)
   doc.rs                         # yrs ↔ y-octo binary compatibility tests
@@ -41,11 +41,11 @@ fuzz/
 
 ## Feature flags
 
-| Feature | Default | Enables |
-|---|---|---|
-| `merger` | yes | `doc_merger` binary (depends on `clap`, enables `y-octo/large_refs`) |
-| `fuzz` | no | LibFuzzer fuzz targets (`arbitrary`, `phf`) |
-| `bench` | no | Benchmark helpers (`regex`) |
+| Feature  | Default | Enables                                                              |
+| -------- | ------- | -------------------------------------------------------------------- |
+| `merger` | yes     | `doc_merger` binary (depends on `clap`, enables `y-octo/large_refs`) |
+| `fuzz`   | no      | LibFuzzer fuzz targets (`arbitrary`, `phf`)                          |
+| `bench`  | no      | Benchmark helpers (`regex`)                                          |
 
 ---
 
@@ -132,6 +132,7 @@ cargo run --bin doc_merger -- --path ./doc.ybinary
 ```
 
 Internally:
+
 1. `load_path(path)` — reads a file or all files in a directory
 2. Applies each update to a `Doc` sequentially
 3. Calls `doc.history().parse_store()` to inspect the final state
@@ -144,16 +145,16 @@ Internally:
 
 LibFuzzer targets cover the full codec pipeline:
 
-| Target | Tests |
-|---|---|
-| `decode_bytes` | Raw byte decoding doesn't panic or corrupt memory |
-| `codec_doc_any` | `Any` encode/decode round-trip |
-| `codec_doc_any_struct` | Structured `Any` round-trip |
-| `sync_message` | `SyncMessage` decode doesn't panic on arbitrary input |
-| `apply_update` | `doc.apply_update()` with arbitrary bytes |
-| `ins_del_text` | Text insert + delete sequences |
-| `i32_encode/decode` | varint i32 round-trip |
-| `u64_encode/decode` | varint u64 round-trip |
+| Target                 | Tests                                                 |
+| ---------------------- | ----------------------------------------------------- |
+| `decode_bytes`         | Raw byte decoding doesn't panic or corrupt memory     |
+| `codec_doc_any`        | `Any` encode/decode round-trip                        |
+| `codec_doc_any_struct` | Structured `Any` round-trip                           |
+| `sync_message`         | `SyncMessage` decode doesn't panic on arbitrary input |
+| `apply_update`         | `doc.apply_update()` with arbitrary bytes             |
+| `ins_del_text`         | Text insert + delete sequences                        |
+| `i32_encode/decode`    | varint i32 round-trip                                 |
+| `u64_encode/decode`    | varint u64 round-trip                                 |
 
 ```bash
 # Run a specific fuzz target (requires nightly)

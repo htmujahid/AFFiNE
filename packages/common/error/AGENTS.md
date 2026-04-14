@@ -4,7 +4,7 @@ Client-side error handling utilities for AFFiNE frontends. Provides a normalised
 
 ## Layout
 
-```
+```text
 src/
   index.ts            # UserFriendlyError, GraphQLError, ErrorName, UserFriendlyErrorResponse, ErrorData
   __tests__/
@@ -23,12 +23,12 @@ import { UserFriendlyError } from '@affine/error';
 // Normalise anything thrown — safe to use in catch blocks
 const err = UserFriendlyError.fromAny(caught);
 
-err.name;       // ErrorName — e.g. 'WORKSPACE_NOT_FOUND', 'NETWORK_ERROR'
-err.status;     // HTTP status code — e.g. 404, 500
-err.code;       // Internal code string — e.g. 'NOT_FOUND'
-err.type;       // Error type category string
-err.message;    // Human-readable message
-err.data;       // Optional structured payload (varies per error)
+err.name; // ErrorName — e.g. 'WORKSPACE_NOT_FOUND', 'NETWORK_ERROR'
+err.status; // HTTP status code — e.g. 404, 500
+err.code; // Internal code string — e.g. 'NOT_FOUND'
+err.type; // Error type category string
+err.message; // Human-readable message
+err.data; // Optional structured payload (varies per error)
 err.stacktrace; // Server stacktrace, if present
 
 // Type-safe name check
@@ -38,23 +38,23 @@ err.is('WORKSPACE_NOT_FOUND'); // boolean
 err.isStatus(404); // boolean
 
 // Network error helpers
-err.isNetworkError();                      // boolean (instance method)
-UserFriendlyError.isNetworkError(err);     // boolean (static)
-UserFriendlyError.notNetworkError(err);    // boolean (static — useful as Array.filter predicate)
+err.isNetworkError(); // boolean (instance method)
+UserFriendlyError.isNetworkError(err); // boolean (static)
+UserFriendlyError.notNetworkError(err); // boolean (static — useful as Array.filter predicate)
 ```
 
 ### `UserFriendlyError.fromAny(anything)`
 
 Static factory — converts anything into a `UserFriendlyError`. Never throws.
 
-| Input type | Result |
-|---|---|
-| `UserFriendlyError` | Returned as-is |
-| `GraphQLError` (from `graphql`) | Reads `extensions` for status/code/type/name/message |
-| Object with `type`, `name`, `message` | Wrapped directly |
-| Object with `message` only | Wrapped as `INTERNAL_SERVER_ERROR` |
-| `string` | Wrapped as `INTERNAL_SERVER_ERROR` with that message |
-| Anything else (`null`, `undefined`, …) | Generic fallback message |
+| Input type                             | Result                                               |
+| -------------------------------------- | ---------------------------------------------------- |
+| `UserFriendlyError`                    | Returned as-is                                       |
+| `GraphQLError` (from `graphql`)        | Reads `extensions` for status/code/type/name/message |
+| Object with `type`, `name`, `message`  | Wrapped directly                                     |
+| Object with `message` only             | Wrapped as `INTERNAL_SERVER_ERROR`                   |
+| `string`                               | Wrapped as `INTERNAL_SERVER_ERROR` with that message |
+| Anything else (`null`, `undefined`, …) | Generic fallback message                             |
 
 ### `GraphQLError`
 
@@ -64,11 +64,11 @@ A subclass of `graphql`'s `GraphQLError` with typed `extensions` (`UserFriendlyE
 
 Union of all server-defined `ErrorNames` (from `@affine/graphql`) plus three client-only names:
 
-| Name | When used |
-|---|---|
-| `NETWORK_ERROR` | Fetch failed / no network |
-| `CONTENT_TOO_LARGE` | Response body too large |
-| `REQUEST_ABORTED` | Request cancelled (`AbortController`) |
+| Name                | When used                             |
+| ------------------- | ------------------------------------- |
+| `NETWORK_ERROR`     | Fetch failed / no network             |
+| `CONTENT_TOO_LARGE` | Response body too large               |
+| `REQUEST_ABORTED`   | Request cancelled (`AbortController`) |
 
 ### `ErrorData`
 
@@ -116,10 +116,10 @@ const nonNetworkErrors = errors.filter(UserFriendlyError.notNetworkError);
 
 ## Peer Dependencies
 
-| Package | Why |
-|---|---|
+| Package           | Why                                                                              |
+| ----------------- | -------------------------------------------------------------------------------- |
 | `@affine/graphql` | `ErrorNames` enum and `ErrorDataUnion` type — drives `ErrorName` and `ErrorData` |
-| `graphql` | `GraphQLError` base class |
+| `graphql`         | `GraphQLError` base class                                                        |
 
 ## Testing
 

@@ -4,7 +4,7 @@ Rust CRDT library. Implements the Yjs data model and binary protocol. All public
 
 ## Layout
 
-```
+```text
 src/
   lib.rs                   # Public API re-exports
   sync.rs                  # Thread primitives (Arc, RwLock; Loom under cfg(loom))
@@ -256,14 +256,14 @@ let _guard = doc.subscribe(|event| {
 
 ## Feature flags
 
-| Feature | Enables |
-|---|---|
-| `events` | `subscribe()` on Doc |
-| `debug` | Debug output + assertions |
-| `subscribe` | Subscription infrastructure |
-| `bench` | Benchmark helpers |
+| Feature      | Enables                                 |
+| ------------ | --------------------------------------- |
+| `events`     | `subscribe()` on Doc                    |
+| `debug`      | Debug output + assertions               |
+| `subscribe`  | Subscription infrastructure             |
+| `bench`      | Benchmark helpers                       |
 | `large_refs` | Support for very large reference counts |
-| `serde_json` | `Any` ↔ `serde_json::Value` conversion |
+| `serde_json` | `Any` ↔ `serde_json::Value` conversion  |
 
 ---
 

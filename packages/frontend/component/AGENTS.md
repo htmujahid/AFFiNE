@@ -4,7 +4,7 @@ AFFiNE's shared React design system. Provides UI primitives, complex feature com
 
 ## Layout
 
-```
+```text
 src/
   index.ts                  # Main barrel export (re-exports everything)
   ui/                       # Core UI primitives
@@ -111,14 +111,14 @@ All components use **Vanilla Extract** (`.css.ts` files, zero-runtime). Styles a
 ### Design tokens
 
 ```typescript
-import { cssVar }   from '@toeverything/theme'     // v1 tokens (legacy)
-import { cssVarV2 } from '@toeverything/theme/v2'  // v2 tokens (current)
+import { cssVar } from '@toeverything/theme'; // v1 tokens (legacy)
+import { cssVarV2 } from '@toeverything/theme/v2'; // v2 tokens (current)
 
 // Semantic token names (v2)
-cssVarV2('button/primary')
-cssVarV2('text/primary')
-cssVarV2('icon/primary')
-cssVarV2('layer/background/primary')
+cssVarV2('button/primary');
+cssVarV2('text/primary');
+cssVarV2('icon/primary');
+cssVarV2('layer/background/primary');
 ```
 
 ### Internal CSS variables pattern
@@ -127,19 +127,19 @@ Components use `createVar()` to expose overridable CSS variables:
 
 ```typescript
 // button.css.ts
-import { style, createVar } from '@vanilla-extract/css'
+import { style, createVar } from '@vanilla-extract/css';
 
-const bgVar   = createVar('bg')
-const textVar = createVar('fg')
+const bgVar = createVar('bg');
+const textVar = createVar('fg');
 
 export const button = style({
   vars: {
-    [bgVar]:   cssVarV2('button/primary'),
+    [bgVar]: cssVarV2('button/primary'),
     [textVar]: cssVarV2('button/pureWhiteText'),
   },
   backgroundColor: bgVar,
   color: textVar,
-})
+});
 ```
 
 Variant selection uses **data attributes** (not class proliferation):
@@ -155,11 +155,11 @@ Variant selection uses **data attributes** (not class proliferation):
 ### `Button`
 
 ```tsx
-import { Button } from '@affine/component'
+import { Button } from '@affine/component';
 
 <Button
-  variant="primary"   // 'primary' | 'secondary' | 'plain' | 'error' | 'success'
-  size="default"      // 'default' | 'large' | 'extraLarge' | 'small' | 'iconSmall'
+  variant="primary" // 'primary' | 'secondary' | 'plain' | 'error' | 'success'
+  size="default" // 'default' | 'large' | 'extraLarge' | 'small' | 'iconSmall'
   prefix={<PlusIcon />}
   suffix={<ChevronIcon />}
   loading={isPending}
@@ -167,14 +167,14 @@ import { Button } from '@affine/component'
   onClick={handleClick}
 >
   New Page
-</Button>
+</Button>;
 ```
 
 ### `Input`
 
 ```tsx
 <Input
-  status="error"   // 'default' | 'error' | 'success' | 'warning'
+  status="error" // 'default' | 'error' | 'success' | 'warning'
   preFix={<SearchIcon />}
   endFix={<ClearButton />}
   placeholder="Search…"
@@ -189,9 +189,9 @@ Built on Radix Dialog. Supports multiple open animations:
 <Modal
   open={open}
   onOpenChange={setOpen}
-  animation="fadeScaleTop"  // 'fadeScaleTop' | 'slideBottom' | 'slideRight' | 'none'
+  animation="fadeScaleTop" // 'fadeScaleTop' | 'slideBottom' | 'slideRight' | 'none'
   fullScreen={false}
-  persistent={false}        // blocks backdrop click / Escape
+  persistent={false} // blocks backdrop click / Escape
   width={480}
 >
   <ModalWrapper>…content…</ModalWrapper>
@@ -220,11 +220,11 @@ Adaptive — renders desktop context menu or mobile bottom sheet based on `BUILD
 Service-based API — call from anywhere (no JSX needed):
 
 ```typescript
-import { notify } from '@affine/component'
+import { notify } from '@affine/component';
 
-notify.success({ title: 'Saved', message: 'Changes saved.' })
-notify.error({ title: 'Failed', message: err.message })
-notify({ title: 'Info', duration: 3000 })
+notify.success({ title: 'Saved', message: 'Changes saved.' });
+notify.error({ title: 'Failed', message: err.message });
+notify({ title: 'Info', duration: 3000 });
 ```
 
 Desktop: floating top-right. Mobile: full-width bottom. Both built on Radix Toast.
@@ -270,14 +270,14 @@ import { DropIndicator, useDragHandle, DnDMonitor } from '@affine/component/ui/d
 
 ```typescript
 import {
-  useAutoFocus,          // focuses element on mount
-  useAutoSelect,         // selects input text on mount
-  useThemeValue,         // reads a CSS variable value at runtime
-  useThemeColorMeta,     // theme color metadata
-  useDebounceCallback,   // debounced callback
-  useRefEffect,          // useEffect that receives the DOM node
-  useDisposable,         // cleanup pattern (IDisposable)
-} from '@affine/component'
+  useAutoFocus, // focuses element on mount
+  useAutoSelect, // selects input text on mount
+  useThemeValue, // reads a CSS variable value at runtime
+  useThemeColorMeta, // theme color metadata
+  useDebounceCallback, // debounced callback
+  useRefEffect, // useEffect that receives the DOM node
+  useDisposable, // cleanup pattern (IDisposable)
+} from '@affine/component';
 ```
 
 ---
@@ -287,14 +287,14 @@ import {
 BlockSuite uses Lit Web Components. This bridge embeds them inside React trees:
 
 ```typescript
-import { createReactComponentFromLit } from '@affine/component'
-import { SomeLitElement } from '@blocksuite/affine'
+import { createReactComponentFromLit } from '@affine/component';
+import { SomeLitElement } from '@blocksuite/affine';
 
 // Wraps a Lit custom element as a React component with typed props
 const SomeReactComponent = createReactComponentFromLit({
   react: React,
   elementClass: SomeLitElement,
-})
+});
 ```
 
 `useLitPortal()` renders Lit elements into a portal so they don't break React's reconciler.
@@ -305,20 +305,20 @@ const SomeReactComponent = createReactComponentFromLit({
 
 ```typescript
 // In app entry (setup.ts)
-import '@affine/component/theme'
+import '@affine/component/theme';
 // → loads font-face declarations, global CSS resets, and CSS variable definitions
 ```
 
 **Bundled fonts:**
 
-| Family | Used for |
-|---|---|
-| Inter | Primary UI text |
-| IBM Plex Mono | Code blocks |
-| Kalam | Handwriting style |
+| Family          | Used for             |
+| --------------- | -------------------- |
+| Inter           | Primary UI text      |
+| IBM Plex Mono   | Code blocks          |
+| Kalam           | Handwriting style    |
 | Source Code Pro | Code / monospace alt |
-| Source Serif 4 | Serif body text |
-| Space Mono | Monospace alt |
+| Source Serif 4  | Serif body text      |
+| Space Mono      | Monospace alt        |
 
 ---
 
@@ -328,7 +328,7 @@ Components check `BUILD_CONFIG.isMobileEdition` at compile time:
 
 ```typescript
 // Resolved at bundle time — no runtime overhead
-const Menu = BUILD_CONFIG.isMobileEdition ? MobileMenu : DesktopMenu
+const Menu = BUILD_CONFIG.isMobileEdition ? MobileMenu : DesktopMenu;
 ```
 
 Affected components: `Menu`, `Notification`, `Button` (no hover states), `Modal` (slide-up animation on mobile), `Input`.
@@ -338,12 +338,12 @@ Affected components: `Menu`, `Notification`, `Button` (no hover states), `Modal`
 ## View transitions
 
 ```typescript
-import { startScopedViewTransition } from '@affine/component'
+import { startScopedViewTransition } from '@affine/component';
 
 // Wraps a state update in the View Transitions API for animated page changes
 startScopedViewTransition(containerEl, () => {
-  navigate('/new-page')
-})
+  navigate('/new-page');
+});
 ```
 
 ---

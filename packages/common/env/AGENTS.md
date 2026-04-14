@@ -4,7 +4,7 @@ Shared runtime environment utilities for AFFiNE frontends. Provides browser/plat
 
 ## Layout
 
-```
+```text
 src/
   global.ts              # setupGlobal() — detects UA, writes globalThis.environment
   ua-helper.ts           # UaHelper class — parses navigator.userAgent into boolean flags
@@ -22,13 +22,13 @@ src/
 
 Each entry point is a separate export path — they are **not** re-exported from a single index:
 
-| Import path | What it provides |
-|---|---|
-| `@affine/env/global` | `setupGlobal()`, `Environment` type |
-| `@affine/env/constant` | `DEFAULT_WORKSPACE_NAME`, `UNTITLED_WORKSPACE_NAME`, `DEFAULT_SORT_KEY`, `MessageCode`, `Messages`, `WorkspaceNotFoundError`, `QueryParamError`, `Unreachable` |
-| `@affine/env/filter` | `filterSchema`, `collectionSchema`, `literalValueSchema`, `Filter`, `Collection`, `LiteralValue`, `Ref`, `VariableMap`, `PropertiesMeta` |
-| `@affine/env/automation` | `Action<InputSchema, Args>` type |
-| `@affine/env/worker` | `getWorkerUrl(name)` |
+| Import path              | What it provides                                                                                                                                               |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@affine/env/global`     | `setupGlobal()`, `Environment` type                                                                                                                            |
+| `@affine/env/constant`   | `DEFAULT_WORKSPACE_NAME`, `UNTITLED_WORKSPACE_NAME`, `DEFAULT_SORT_KEY`, `MessageCode`, `Messages`, `WorkspaceNotFoundError`, `QueryParamError`, `Unreachable` |
+| `@affine/env/filter`     | `filterSchema`, `collectionSchema`, `literalValueSchema`, `Filter`, `Collection`, `LiteralValue`, `Ref`, `VariableMap`, `PropertiesMeta`                       |
+| `@affine/env/automation` | `Action<InputSchema, Args>` type                                                                                                                               |
+| `@affine/env/worker`     | `getWorkerUrl(name)`                                                                                                                                           |
 
 > Note: `is-valid-ip-address.ts` and `page-info.ts` are not listed in `package.json#exports` — they are imported directly by internal consumers.
 
@@ -44,21 +44,21 @@ setupGlobal();
 
 The `Environment` object written to `globalThis.environment` exposes:
 
-| Field | Type | Source |
-|---|---|---|
-| `isLinux` | `boolean` | UA |
-| `isMacOs` | `boolean` | UA |
-| `isWindows` | `boolean` | UA |
-| `isSafari` | `boolean` | UA |
-| `isFireFox` | `boolean` | UA |
-| `isChrome` | `boolean` | UA |
-| `isIOS` | `boolean` | UA |
-| `isMobile` | `boolean` | UA |
-| `isPwa` | `boolean` | `display-mode: standalone` media query / `navigator.standalone` |
-| `isSelfHosted` | `boolean` | Default `false` — overridden via HTML `<meta>` tag |
-| `publicPath` | `string` | Default `'/'` — overridden via HTML `<meta>` tag |
-| `subPath` | `string` | Default `''` — overridden via HTML `<meta>` tag |
-| `chromeVersion` | `number` | Only set when `isChrome && !isIOS` |
+| Field           | Type      | Source                                                          |
+| --------------- | --------- | --------------------------------------------------------------- |
+| `isLinux`       | `boolean` | UA                                                              |
+| `isMacOs`       | `boolean` | UA                                                              |
+| `isWindows`     | `boolean` | UA                                                              |
+| `isSafari`      | `boolean` | UA                                                              |
+| `isFireFox`     | `boolean` | UA                                                              |
+| `isChrome`      | `boolean` | UA                                                              |
+| `isIOS`         | `boolean` | UA                                                              |
+| `isMobile`      | `boolean` | UA                                                              |
+| `isPwa`         | `boolean` | `display-mode: standalone` media query / `navigator.standalone` |
+| `isSelfHosted`  | `boolean` | Default `false` — overridden via HTML `<meta>` tag              |
+| `publicPath`    | `string`  | Default `'/'` — overridden via HTML `<meta>` tag                |
+| `subPath`       | `string`  | Default `''` — overridden via HTML `<meta>` tag                 |
+| `chromeVersion` | `number`  | Only set when `isChrome && !isIOS`                              |
 
 ### HTML Meta Override
 
@@ -110,23 +110,23 @@ Use `collectionSchema.parse(data)` and `filterSchema.parse(data)` for runtime va
 
 ## Constants / `constant.ts`
 
-| Export | Value / Purpose |
-|---|---|
-| `DEFAULT_WORKSPACE_NAME` | `'Demo Workspace'` |
-| `UNTITLED_WORKSPACE_NAME` | `'Untitled'` |
-| `DEFAULT_SORT_KEY` | `'updatedDate'` |
-| `MessageCode` | Numeric error codes for workspace operation failures |
-| `Messages` | Human-readable messages keyed by `MessageCode` |
-| `WorkspaceNotFoundError` | `TypeError` subclass with `workspaceId` field |
-| `QueryParamError` | `TypeError` subclass with `targetKey` + `query` fields |
-| `Unreachable` | `Error` for branches that should never be reached |
+| Export                    | Value / Purpose                                        |
+| ------------------------- | ------------------------------------------------------ |
+| `DEFAULT_WORKSPACE_NAME`  | `'Demo Workspace'`                                     |
+| `UNTITLED_WORKSPACE_NAME` | `'Untitled'`                                           |
+| `DEFAULT_SORT_KEY`        | `'updatedDate'`                                        |
+| `MessageCode`             | Numeric error codes for workspace operation failures   |
+| `Messages`                | Human-readable messages keyed by `MessageCode`         |
+| `WorkspaceNotFoundError`  | `TypeError` subclass with `workspaceId` field          |
+| `QueryParamError`         | `TypeError` subclass with `targetKey` + `query` fields |
+| `Unreachable`             | `Error` for branches that should never be reached      |
 
 ## Peer Dependencies
 
-| Package | Why |
-|---|---|
+| Package              | Why                                           |
+| -------------------- | --------------------------------------------- |
 | `@blocksuite/affine` | `filter.ts` imports `DocsPropertiesMeta` type |
-| `@affine/templates` | Declared peer but used transitively |
+| `@affine/templates`  | Declared peer but used transitively           |
 
 ## Testing
 

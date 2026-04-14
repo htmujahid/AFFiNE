@@ -4,7 +4,7 @@ Pure Rust library crate (`affine_common`) that provides the performance-critical
 
 ## Layout
 
-```
+```text
 src/
   lib.rs           # Crate root — declares feature-gated modules
   doc_parser/      # Read + write Yjs/BlockSuite documents (feature: ydoc-loader)
@@ -57,13 +57,13 @@ fixtures/          # Test data: demo.docx, demo.ydoc, sample.pdf, sample.c, etc.
 
 All modules are feature-gated. Downstream NAPI crates enable the features they need:
 
-| Feature | Enables | Used by |
-|---|---|---|
-| `ydoc-loader` | `doc_parser` module | `@affine/server-native`, `@affine/native` |
-| `doc-loader` | `doc_loader` module | `@affine/server-native` (indexer) |
-| `hashcash` | `hashcash` module | `@affine/server-native` |
-| `napi` | `napi_utils` module | Both NAPI crates |
-| `tree-sitter` | Source code parsing (sub-feature of `doc-loader`) | `@affine/server-native` |
+| Feature       | Enables                                           | Used by                                   |
+| ------------- | ------------------------------------------------- | ----------------------------------------- |
+| `ydoc-loader` | `doc_parser` module                               | `@affine/server-native`, `@affine/native` |
+| `doc-loader`  | `doc_loader` module                               | `@affine/server-native` (indexer)         |
+| `hashcash`    | `hashcash` module                                 | `@affine/server-native`                   |
+| `napi`        | `napi_utils` module                               | Both NAPI crates                          |
+| `tree-sitter` | Source code parsing (sub-feature of `doc-loader`) | `@affine/server-native`                   |
 
 ---
 
@@ -73,15 +73,16 @@ Operates on y-octo (`yjs`-compatible) document binaries. All public functions ac
 
 ### Read functions
 
-| Function | Input | Output | Description |
-|---|---|---|---|
-| `parse_doc_from_binary(bin, doc_id)` | doc binary | `CrawlResult` | Extract all blocks, title, summary |
-| `parse_doc_to_markdown(bin, doc_id, ai_editable?, url_prefix?)` | doc binary | `MarkdownResult` | Convert doc to Markdown |
-| `parse_page_doc(bin, max_summary_len?)` | doc binary | `Option<PageDocContent>` | Title + summary for a page doc |
-| `parse_workspace_doc(bin)` | doc binary | `Option<WorkspaceDocContent>` | Workspace name + avatar key |
-| `get_doc_ids_from_binary(bin, include_trash?)` | root doc binary | `Vec<String>` | All doc IDs in the workspace |
+| Function                                                        | Input           | Output                        | Description                        |
+| --------------------------------------------------------------- | --------------- | ----------------------------- | ---------------------------------- |
+| `parse_doc_from_binary(bin, doc_id)`                            | doc binary      | `CrawlResult`                 | Extract all blocks, title, summary |
+| `parse_doc_to_markdown(bin, doc_id, ai_editable?, url_prefix?)` | doc binary      | `MarkdownResult`              | Convert doc to Markdown            |
+| `parse_page_doc(bin, max_summary_len?)`                         | doc binary      | `Option<PageDocContent>`      | Title + summary for a page doc     |
+| `parse_workspace_doc(bin)`                                      | doc binary      | `Option<WorkspaceDocContent>` | Workspace name + avatar key        |
+| `get_doc_ids_from_binary(bin, include_trash?)`                  | root doc binary | `Vec<String>`                 | All doc IDs in the workspace       |
 
 **Return types:**
+
 - `CrawlResult { blocks: Vec<BlockInfo>, title: String, summary: String }`
 - `BlockInfo { block_id, flavour, content?, blob?, ref_doc_id?, ref_info?, parent_flavour?, parent_block_id?, additional? }`
 - `MarkdownResult { title, markdown, known_unsupported_blocks, unknown_blocks }`
@@ -90,15 +91,15 @@ Operates on y-octo (`yjs`-compatible) document binaries. All public functions ac
 
 ### Write functions (return Yjs update binaries)
 
-| Function | Description |
-|---|---|
-| `build_full_doc(title, markdown, doc_id)` | Create a brand-new doc binary from Markdown |
-| `update_doc(existing_bin, new_markdown, doc_id)` | Apply a Markdown diff (structural block-level replace) → delta binary |
-| `update_doc_title(existing_bin, title, doc_id)` | Update title only → delta binary |
-| `update_doc_properties(existing_bin, properties_doc_id, target_doc_id, created_by?, updated_by?)` | Update docProperties record → delta binary |
-| `add_doc_to_root_doc(root_doc_bin, doc_id, title?)` | Register a doc in `meta.pages` → delta binary |
-| `update_root_doc_meta_title(root_doc_bin, doc_id, title)` | Update title entry in root doc meta → delta binary |
-| `build_public_root_doc(root_doc_bin, doc_metas)` | Build a filtered public root doc → full binary |
+| Function                                                                                          | Description                                                           |
+| ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `build_full_doc(title, markdown, doc_id)`                                                         | Create a brand-new doc binary from Markdown                           |
+| `update_doc(existing_bin, new_markdown, doc_id)`                                                  | Apply a Markdown diff (structural block-level replace) → delta binary |
+| `update_doc_title(existing_bin, title, doc_id)`                                                   | Update title only → delta binary                                      |
+| `update_doc_properties(existing_bin, properties_doc_id, target_doc_id, created_by?, updated_by?)` | Update docProperties record → delta binary                            |
+| `add_doc_to_root_doc(root_doc_bin, doc_id, title?)`                                               | Register a doc in `meta.pages` → delta binary                         |
+| `update_root_doc_meta_title(root_doc_bin, doc_id, title)`                                         | Update title entry in root doc meta → delta binary                    |
+| `build_public_root_doc(root_doc_bin, doc_metas)`                                                  | Build a filtered public root doc → full binary                        |
 
 All "delta" functions return only the changed Yjs update, not the full document — callers apply the update with `Y.applyUpdate`.
 
@@ -130,23 +131,23 @@ pub struct Chunk {
 
 ### Loaders
 
-| Loader | File types | Splitting |
-|---|---|---|
-| `PdfExtractLoader` | `.pdf` | `TextSplitter` / `TokenSplitter` |
-| `DocxLoader` | `.docx` | `MarkdownSplitter` |
-| `HtmlLoader` | `.html`, `.htm` | `TextSplitter` (readability extraction) |
-| `TextLoader` | `.txt`, `.md`, plain text | `TextSplitter` / `MarkdownSplitter` |
+| Loader             | File types                                                                       | Splitting                               |
+| ------------------ | -------------------------------------------------------------------------------- | --------------------------------------- |
+| `PdfExtractLoader` | `.pdf`                                                                           | `TextSplitter` / `TokenSplitter`        |
+| `DocxLoader`       | `.docx`                                                                          | `MarkdownSplitter`                      |
+| `HtmlLoader`       | `.html`, `.htm`                                                                  | `TextSplitter` (readability extraction) |
+| `TextLoader`       | `.txt`, `.md`, plain text                                                        | `TextSplitter` / `MarkdownSplitter`     |
 | `SourceCodeLoader` | `.rs`, `.ts`, `.js`, `.py`, `.go`, `.java`, `.c`, `.cpp`, `.cs`, `.kt`, `.scala` | `TokenSplitter` (tree-sitter AST-aware) |
 
 The loader is selected automatically by file extension via `get_language_by_filename`.
 
 ### Splitters
 
-| Splitter | Strategy |
-|---|---|
+| Splitter           | Strategy                                   |
+| ------------------ | ------------------------------------------ |
 | `MarkdownSplitter` | Splits on Markdown headings and paragraphs |
-| `TextSplitter` | Splits on sentence/paragraph boundaries |
-| `TokenSplitter` | Splits by token count using `tiktoken-rs` |
+| `TextSplitter`     | Splits on sentence/paragraph boundaries    |
+| `TokenSplitter`    | Splits by token count using `tiktoken-rs`  |
 
 ---
 

@@ -7,7 +7,7 @@ Open-source, local-first workspace (Notion + Miro alternative). Privacy-focused,
 Yarn 4.x Berry workspaces. All packages use `@affine/` or `@affine-tools/` namespace.
 **Every package has its own `AGENTS.md` — read it before working in that area.**
 
-```
+```text
 packages/
   frontend/
     core/              # @affine/core — 69 modules, all shared app logic (DI services, routes, BlockSuite integration)
@@ -143,7 +143,7 @@ const docs = useLiveData(docsService.docs$)
 
 ### 7. Storage abstraction layers
 
-```
+```text
 @affine/nbstore
   SpaceStorage (aggregator)
     ├── DocStorage     ← Yjs CRDT snapshots + updates
@@ -157,7 +157,7 @@ Implementations: idb (browser), sqlite (Electron/mobile), cloud (HTTP+WS), broad
 
 ### 8. IPC in Electron
 
-```
+```text
 Renderer → window.apis.* (preload contextBridge)
          → ipcRenderer.invoke / MessagePort (async-call-rpc)
          → Main process handlers / Helper process (SQLite)

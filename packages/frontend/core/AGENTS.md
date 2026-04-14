@@ -4,7 +4,7 @@ The heart of AFFiNE's frontend. Contains all shared app logic — 69 feature mod
 
 ## Layout
 
-```
+```text
 src/
   bootstrap/              # App initialization (env, polyfills, telemetry)
   blocksuite/             # BlockSuite editor integration & view extensions
@@ -25,26 +25,20 @@ src/
 
 ### DI component types
 
-| Type | Lifecycle | Purpose |
-|---|---|---|
-| `Service` | Singleton per scope | Business logic, public API |
-| `Entity` | Created on demand | Reactive wrapper around a domain object |
-| `Store` | Singleton per scope | Data source backing entities |
-| `Scope` | Context container | Groups related services; child of parent scope |
-| `impl()` | — | Swap concrete implementation per platform |
+| Type      | Lifecycle           | Purpose                                        |
+| --------- | ------------------- | ---------------------------------------------- |
+| `Service` | Singleton per scope | Business logic, public API                     |
+| `Entity`  | Created on demand   | Reactive wrapper around a domain object        |
+| `Store`   | Singleton per scope | Data source backing entities                   |
+| `Scope`   | Context container   | Groups related services; child of parent scope |
+| `impl()`  | —                   | Swap concrete implementation per platform      |
 
 ### Registration pattern
 
 ```typescript
 // modules/workspace/index.ts
 export function configureWorkspaceModule(framework: Framework) {
-  framework
-    .scope(WorkspaceScope)
-    .service(WorkspacesService, [WorkspaceFlavoursService])
-    .service(WorkspaceListService)
-    .service(WorkspaceService)
-    .entity(Workspace, [WorkspaceScope, FeatureFlagService])
-    .impl(WorkspaceLocalState, IDBWorkspaceLocalState, [GlobalCacheService])
+  framework.scope(WorkspaceScope).service(WorkspacesService, [WorkspaceFlavoursService]).service(WorkspaceListService).service(WorkspaceService).entity(Workspace, [WorkspaceScope, FeatureFlagService]).impl(WorkspaceLocalState, IDBWorkspaceLocalState, [GlobalCacheService]);
 }
 ```
 
@@ -52,7 +46,7 @@ All modules are wired together in `configureCommonModules(framework)` (called by
 
 ### Entity → Service → React pattern
 
-```
+```text
 Store  (raw data, Memento / Yjs / GraphQL)
   ↓
 Entity (reactive LiveData wrapper + business logic)
@@ -70,22 +64,22 @@ useService(SomeService) in React components
 
 ```typescript
 // Services
-WorkspacesService    // all workspaces list, create, delete
-WorkspaceService     // current workspace (within WorkspaceScope)
-WorkspaceEngineService // storage engine (nbstore)
-WorkspaceListService // reactive workspace list
+WorkspacesService; // all workspaces list, create, delete
+WorkspaceService; // current workspace (within WorkspaceScope)
+WorkspaceEngineService; // storage engine (nbstore)
+WorkspaceListService; // reactive workspace list
 
 // Entity
 class Workspace {
-  readonly id: string
-  readonly rootYDoc: YDoc               // root Yjs document
-  get docCollection(): WorkspaceInterface // BlockSuite doc collection
-  get docs()                            // all docs in workspace
-  get engine()                          // storage + indexer + awareness
+  readonly id: string;
+  readonly rootYDoc: YDoc; // root Yjs document
+  get docCollection(): WorkspaceInterface; // BlockSuite doc collection
+  get docs(); // all docs in workspace
+  get engine(); // storage + indexer + awareness
 }
 
 // Scope
-WorkspaceScope  // child services scoped to one workspace
+WorkspaceScope; // child services scoped to one workspace
 ```
 
 ### `doc` — Document entity management
@@ -123,11 +117,11 @@ class Editor {
 }
 
 // Services
-EditorsService  // creates and manages Editor instances per Doc
-EditorService   // current editor
+EditorsService; // creates and manages Editor instances per Doc
+EditorService; // current editor
 
 // Scope
-EditorScope
+EditorScope;
 ```
 
 ### `workbench` — Tab/view management
@@ -136,31 +130,29 @@ The workbench is AFFiNE's multi-tab system. Each workspace has one `Workbench` c
 
 ```typescript
 class Workbench {
-  readonly views$: LiveData<View[]>
-  readonly activeViewIndex$: LiveData<number>
-  readonly activeView$: LiveData<View>
-  readonly location$: LiveData<Location>
+  readonly views$: LiveData<View[]>;
+  readonly activeViewIndex$: LiveData<number>;
+  readonly activeView$: LiveData<View>;
+  readonly location$: LiveData<Location>;
 
   // Sidebar state
-  readonly sidebarOpen$: LiveData<boolean>
-  readonly sidebarWidth$: LiveData<number>
-  setSidebarOpen(open: boolean): void
+  readonly sidebarOpen$: LiveData<boolean>;
+  readonly sidebarWidth$: LiveData<number>;
+  setSidebarOpen(open: boolean): void;
 
   // Navigation
-  openPage(
-    location: To,
-    options?: { at: 'beside' | 'active' | 'head' | 'tail' | number }
-  ): void
+  openPage(location: To, options?: { at: 'beside' | 'active' | 'head' | 'tail' | number }): void;
 }
 
 class View {
-  readonly id: string
-  readonly location$: LiveData<Location>
-  readonly title$: LiveData<string>
+  readonly id: string;
+  readonly location$: LiveData<Location>;
+  readonly title$: LiveData<string>;
 }
 ```
 
 Platform-specific implementations:
+
 - `configureBrowserWorkbenchModule(framework)` — browser tab/URL sync
 - `configureDesktopWorkbenchModule(framework)` — Electron window + state sync
 
@@ -168,38 +160,38 @@ Platform-specific implementations:
 
 ```typescript
 // Key services
-AuthService         // login, logout, session management
-ServerService       // server config, initialized state
-GraphQLService      // typed GraphQL client
-FetchService        // authenticated HTTP fetch
-SubscriptionService // Pro/Team subscription state
-UserQuotaService    // storage quota
-UserFeatureService  // feature flags from server (Admin, EarlyAccess, etc.)
-CloudDocMetaService // cloud-side doc metadata
+AuthService; // login, logout, session management
+ServerService; // server config, initialized state
+GraphQLService; // typed GraphQL client
+FetchService; // authenticated HTTP fetch
+SubscriptionService; // Pro/Team subscription state
+UserQuotaService; // storage quota
+UserFeatureService; // feature flags from server (Admin, EarlyAccess, etc.)
+CloudDocMetaService; // cloud-side doc metadata
 
 // Entities
-Server       // server config + connection state
-AuthSession  // current session (user, token)
-Subscription // subscription tier + plan
+Server; // server config + connection state
+AuthSession; // current session (user, token)
+Subscription; // subscription tier + plan
 
 // Scope
-ServerScope  // groups all cloud services for a specific server URL
+ServerScope; // groups all cloud services for a specific server URL
 ```
 
 ### `storage` — Persistence layer
 
 ```typescript
 // Abstractions (Memento interface — see @toeverything/infra/storage)
-GlobalState         // persistent app state → IDB (browser) or config file (Electron)
-GlobalCache         // transient cache → localStorage
-GlobalSessionState  // session-only → sessionStorage
-CacheStorage        // async large-data storage
+GlobalState; // persistent app state → IDB (browser) or config file (Electron)
+GlobalCache; // transient cache → localStorage
+GlobalSessionState; // session-only → sessionStorage
+CacheStorage; // async large-data storage
 
 // Services
-GlobalStateService
-GlobalCacheService
-GlobalSessionStateService
-NbstoreService      // nbstore StoreManager integration
+GlobalStateService;
+GlobalCacheService;
+GlobalSessionStateService;
+NbstoreService; // nbstore StoreManager integration
 ```
 
 Platform impls: `configureLocalStorageStateStorageImpls()` (browser) / `configureElectronStateStorageImpls()` (Electron).
@@ -209,90 +201,98 @@ Platform impls: `configureLocalStorageStateStorageImpls()` (browser) / `configur
 ## All 69 modules (by category)
 
 ### Infrastructure
-| Module | Key exports |
-|---|---|
-| `lifecycle` | `AppLifecycleService` — app start/stop hooks |
-| `feature-flag` | `FeatureFlagService` — runtime feature toggles |
+
+| Module           | Key exports                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| `lifecycle`      | `AppLifecycleService` — app start/stop hooks                    |
+| `feature-flag`   | `FeatureFlagService` — runtime feature toggles                  |
 | `global-context` | `GlobalContextService` — current workspace/doc/user observables |
-| `storage` | `GlobalStateService`, `GlobalCacheService` |
-| `telemetry` | `TelemetryService` — analytics events |
-| `i18n` | `I18nService` — language switching |
-| `navigation` | `NavigationService`, URL helpers |
-| `url` | `UrlService` — URL construction |
-| `permissions` | `WorkspacePermissionService` — role-based access |
-| `quota` | `QuotaModule` — storage quotas |
-| `paywall` | `PaywallService` — subscription gating |
+| `storage`        | `GlobalStateService`, `GlobalCacheService`                      |
+| `telemetry`      | `TelemetryService` — analytics events                           |
+| `i18n`           | `I18nService` — language switching                              |
+| `navigation`     | `NavigationService`, URL helpers                                |
+| `url`            | `UrlService` — URL construction                                 |
+| `permissions`    | `WorkspacePermissionService` — role-based access                |
+| `quota`          | `QuotaModule` — storage quotas                                  |
+| `paywall`        | `PaywallService` — subscription gating                          |
 
 ### Workspace & Docs
-| Module | Key exports |
-|---|---|
-| `workspace` | `Workspace`, `WorkspacesService`, `WorkspaceScope` |
-| `workspace-engine` | Storage engine wiring |
-| `workspace-property` | Workspace-level custom properties |
-| `workspace-indexer-embedding` | Vector/semantic search |
-| `doc` | `Doc`, `DocsService`, `DocScope` |
-| `doc-display-meta` | Display name/icon resolution |
-| `doc-info` | Doc info panel service |
-| `doc-link` | `@doc/` link resolution |
-| `doc-summary` | AI-generated summaries |
-| `docs-search` | Full-text search |
-| `db` | `WorkspaceDBService` — workspace metadata DB |
+
+| Module                        | Key exports                                        |
+| ----------------------------- | -------------------------------------------------- |
+| `workspace`                   | `Workspace`, `WorkspacesService`, `WorkspaceScope` |
+| `workspace-engine`            | Storage engine wiring                              |
+| `workspace-property`          | Workspace-level custom properties                  |
+| `workspace-indexer-embedding` | Vector/semantic search                             |
+| `doc`                         | `Doc`, `DocsService`, `DocScope`                   |
+| `doc-display-meta`            | Display name/icon resolution                       |
+| `doc-info`                    | Doc info panel service                             |
+| `doc-link`                    | `@doc/` link resolution                            |
+| `doc-summary`                 | AI-generated summaries                             |
+| `docs-search`                 | Full-text search                                   |
+| `db`                          | `WorkspaceDBService` — workspace metadata DB       |
 
 ### Organisation
-| Module | Key exports |
-|---|---|
-| `collection` | `CollectionService` — smart collections with rules |
-| `collection-rules` | Filter rule evaluation |
-| `tag` | `TagService` — document tagging |
-| `favorite` | `FavoriteService` — starred docs |
-| `trash` | `TrashService` — soft-delete management |
-| `journal` | `JournalService` — daily notes |
+
+| Module             | Key exports                                        |
+| ------------------ | -------------------------------------------------- |
+| `collection`       | `CollectionService` — smart collections with rules |
+| `collection-rules` | Filter rule evaluation                             |
+| `tag`              | `TagService` — document tagging                    |
+| `favorite`         | `FavoriteService` — starred docs                   |
+| `trash`            | `TrashService` — soft-delete management            |
+| `journal`          | `JournalService` — daily notes                     |
 
 ### Editor & BlockSuite
-| Module | Key exports |
-|---|---|
-| `editor` | `Editor`, `EditorService`, `EditorScope` |
-| `editor-setting` | `EditorSettingService` — per-user editor prefs |
-| `workbench` | `Workbench`, `WorkbenchService`, `View`, `ViewScope` |
-| `peek-view` | `PeekViewService` — modal doc preview |
-| `code-block-preview-renderer` | Shiki syntax highlighting |
-| `pdf` | PDF viewer/embed |
+
+| Module                        | Key exports                                          |
+| ----------------------------- | ---------------------------------------------------- |
+| `editor`                      | `Editor`, `EditorService`, `EditorScope`             |
+| `editor-setting`              | `EditorSettingService` — per-user editor prefs       |
+| `workbench`                   | `Workbench`, `WorkbenchService`, `View`, `ViewScope` |
+| `peek-view`                   | `PeekViewService` — modal doc preview                |
+| `code-block-preview-renderer` | Shiki syntax highlighting                            |
+| `pdf`                         | PDF viewer/embed                                     |
 
 ### Cloud & Auth
-| Module | Key exports |
-|---|---|
-| `cloud` | `AuthService`, `ServerService`, `SubscriptionService` |
-| `share-doc` | `ShareDocService` — public share links |
-| `share-menu` | Share UI |
-| `comment` | `CommentService` — annotations |
-| `blob-management` | `BlobManagementService` — file lifecycle |
-| `import-clipper` | Web clipper integration |
-| `integration` | Third-party integrations |
+
+| Module            | Key exports                                           |
+| ----------------- | ----------------------------------------------------- |
+| `cloud`           | `AuthService`, `ServerService`, `SubscriptionService` |
+| `share-doc`       | `ShareDocService` — public share links                |
+| `share-menu`      | Share UI                                              |
+| `comment`         | `CommentService` — annotations                        |
+| `blob-management` | `BlobManagementService` — file lifecycle              |
+| `import-clipper`  | Web clipper integration                               |
+| `integration`     | Third-party integrations                              |
 
 ### AI
-| Module | Key exports |
-|---|---|
-| `ai-button` | AI entry point button |
+
+| Module         | Key exports                                |
+| -------------- | ------------------------------------------ |
+| `ai-button`    | AI entry point button                      |
 | Various `ai-*` | Draft, model, playground, reasoning, tools |
 
 ### UI
-| Module | Key exports |
-|---|---|
-| `app-sidebar` | Main sidebar service |
-| `dialogs` | `GlobalDialogService` — imperative dialog opening |
-| `notification` | `NotificationService` — toast API |
-| `theme` | `AppThemeService` — light/dark/system |
-| `theme-editor` | Theme customization UI |
-| `search-menu` | Global search UI |
-| `quicksearch` | Quick open palette |
+
+| Module         | Key exports                                       |
+| -------------- | ------------------------------------------------- |
+| `app-sidebar`  | Main sidebar service                              |
+| `dialogs`      | `GlobalDialogService` — imperative dialog opening |
+| `notification` | `NotificationService` — toast API                 |
+| `theme`        | `AppThemeService` — light/dark/system             |
+| `theme-editor` | Theme customization UI                            |
+| `search-menu`  | Global search UI                                  |
+| `quicksearch`  | Quick open palette                                |
 
 ### Platform
-| Module | Key exports |
-|---|---|
+
+| Module        | Key exports                                |
+| ------------- | ------------------------------------------ |
 | `desktop-api` | `DesktopApiService` — `window.apis` bridge |
-| `open-in-app` | Desktop app deep link |
-| `userspace` | User profile workspace |
-| `media` | Media query services |
+| `open-in-app` | Desktop app deep link                      |
+| `userspace`   | User profile workspace                     |
+| `media`       | Media query services                       |
 
 ---
 
@@ -300,7 +300,7 @@ Platform impls: `configureLocalStorageStateStorageImpls()` (browser) / `configur
 
 ### Desktop (`src/desktop/`)
 
-```
+```text
 /                              → workspace selector / home
 /workspace/:workspaceId/*      → workbench (nested)
   /chat                        → AI chat
@@ -334,7 +334,7 @@ All routes use `lazy(() => import('./path'))` for code splitting. Dynamic import
 
 BlockSuite uses Lit Web Components, not React. The integration layer bridges the two.
 
-```
+```text
 blocksuite/
   initialization/        # ViewProvider fluent builder for assembling extensions
   manager/               # ViewExtensionManager — registers extensions with BlockSuite
@@ -374,16 +374,16 @@ Extensions are assembled via the `ViewProvider` fluent API:
 // initialization/index.ts
 const provider = new ViewProvider(framework)
   .init()
-  .foundation()         // core BlockSuite extensions
-  .editorView()         // AFFiNE editor view
-  .theme()              // theme bridge
-  .editorConfig()       // per-user editor settings
-  .cloud()              // cloud sync + awareness
-  .ai()                 // AI copilot
-  .comment()            // comments
-  .database()           // database view
-  .pdf()                // PDF embeds
-  // ...more extensions
+  .foundation() // core BlockSuite extensions
+  .editorView() // AFFiNE editor view
+  .theme() // theme bridge
+  .editorConfig() // per-user editor settings
+  .cloud() // cloud sync + awareness
+  .ai() // AI copilot
+  .comment() // comments
+  .database() // database view
+  .pdf(); // PDF embeds
+// ...more extensions
 
 // Returned extension array is passed to BlockSuite editor
 ```
@@ -392,7 +392,7 @@ const provider = new ViewProvider(framework)
 
 ## Bootstrap flow (`src/bootstrap/`)
 
-```
+```text
 Platform entry (web/index.tsx, electron-renderer/app.tsx, etc.)
   └── setup.ts
         ├── env.ts            (BUILD_CONFIG, environment detection)
@@ -432,7 +432,7 @@ Command categories: `affine:creation`, `affine:navigation`, `affine:settings`, `
 
 ## Components (`src/components/`)
 
-```
+```text
 components/
   hooks/
     use-navigate-helper.ts   # jumpToPage(), jumpToWorkspace(), etc. (cross-workbench nav)
@@ -462,9 +462,9 @@ components/
 ### Navigation helpers
 
 ```typescript
-import { useNavigateHelper } from '@affine/core/components/hooks/use-navigate-helper'
+import { useNavigateHelper } from '@affine/core/components/hooks/use-navigate-helper';
 
-const { jumpToPage, jumpToCollections, jumpToTags, jumpToTrash } = useNavigateHelper()
+const { jumpToPage, jumpToCollections, jumpToTags, jumpToTrash } = useNavigateHelper();
 // For cross-workbench navigation (changes URL)
 // For within-workbench tab navigation, use WorkbenchService instead
 ```
@@ -508,7 +508,7 @@ Used for ephemeral UI state in components where LiveData is overkill.
 
 ## Multi-platform support
 
-```
+```text
 configureCommonModules(framework)              // all 69 modules
   +
 configureBrowserWorkbenchModule(framework)     // web + mobile

@@ -4,7 +4,7 @@ Electron renderer process UI. Extends `@affine/core` with desktop-specific modul
 
 ## Layout
 
-```
+```text
 src/
   app/                        # Main app window
     index.tsx                 # Entry point
@@ -36,7 +36,7 @@ src/
 
 ## Entry flow
 
-```
+```text
 app/index.tsx
   └── setup.ts         (bootstrap electron module + theme)
   └── <App />
@@ -54,10 +54,10 @@ app/index.tsx
 ## Desktop-specific module configuration (`effects/modules.ts`)
 
 ```typescript
-configureCommonModules(framework)               // shared services
-configureDesktopWorkbenchModule(framework)      // multi-tab workbench, window management
-configureElectronStateStorageImpls(framework)   // Memento backed by electron config-storage
-configureDesktopApiModule(framework)            // window.apis IPC bridge as a service
+configureCommonModules(framework); // shared services
+configureDesktopWorkbenchModule(framework); // multi-tab workbench, window management
+configureElectronStateStorageImpls(framework); // Memento backed by electron config-storage
+configureDesktopApiModule(framework); // window.apis IPC bridge as a service
 ```
 
 The key difference from `@affine/web`: storage implementations and the workbench module use Electron-native APIs instead of browser APIs.
@@ -80,7 +80,7 @@ Subscribes to `window.events` (set up by the preload script) and routes them int
 
 ```typescript
 // Reads theme from main process config + system, writes back on user change
-syncThemeWithMain(themeService, window.apis.appConfig)
+syncThemeWithMain(themeService, window.apis.appConfig);
 ```
 
 Light/dark/system modes are synchronized between the renderer and the main process so the OS-level appearance (title bar, tray icon) matches.
@@ -108,11 +108,11 @@ Used to adjust sync behavior (e.g. reduce sync frequency on battery).
 
 Three separate Vite / bundle entry points, each a self-contained React app:
 
-| Window | Entry | Purpose |
-|---|---|---|
-| `app` | `src/app/index.tsx` | Main editor window |
+| Window  | Entry                 | Purpose                             |
+| ------- | --------------------- | ----------------------------------- |
+| `app`   | `src/app/index.tsx`   | Main editor window                  |
 | `popup` | `src/popup/index.tsx` | Auth challenges, recording controls |
-| `shell` | `src/shell/index.tsx` | Minimal chrome overlays |
+| `shell` | `src/shell/index.tsx` | Minimal chrome overlays             |
 
 Windows communicate via `window.apis.sharedStorage` (cross-window key-value) and `window.events`.
 
@@ -123,7 +123,9 @@ Windows communicate via `window.apis.sharedStorage` (cross-window key-value) and
 `app/app.tsx` conditionally renders a custom title bar on Windows (no native title bar):
 
 ```tsx
-{BUILD_CONFIG.isWindows && <WindowsAppControls />}
+{
+  BUILD_CONFIG.isWindows && <WindowsAppControls />;
+}
 ```
 
 ---

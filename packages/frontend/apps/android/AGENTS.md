@@ -4,7 +4,7 @@ Android native app — Capacitor v7 hybrid app. Nearly identical in structure to
 
 ## Layout
 
-```
+```text
 src/
   index.tsx           # Entry — native DB binding + StrictMode + Telemetry
   app.tsx             # Root component — Framework + mobile + native modules
@@ -61,12 +61,12 @@ Android-specific floating action button for AI copilot. Not present in iOS (uses
 
 The following plugins have the same JavaScript API as `@affine/ios` — only the native implementation differs:
 
-| Plugin | iOS | Android |
-|---|---|---|
-| `auth/` | In-app browser + deep link | In-app browser + deep link |
-| `nbstore/` | SQLite via Swift | SQLite via SQLiteOpenHelper |
-| `hashcash/` | Swift SHA3 | Kotlin SHA3 |
-| `preview/` | CoreGraphics | Android Canvas |
+| Plugin      | iOS                        | Android                     |
+| ----------- | -------------------------- | --------------------------- |
+| `auth/`     | In-app browser + deep link | In-app browser + deep link  |
+| `nbstore/`  | SQLite via Swift           | SQLite via SQLiteOpenHelper |
+| `hashcash/` | Swift SHA3                 | Kotlin SHA3                 |
+| `preview/`  | CoreGraphics               | Android Canvas              |
 
 See [`@affine/ios`](../ios/CLAUDE.md) for the shared architecture (proxy.ts token injection, NativeDBBinding, entry flow).
 
@@ -74,14 +74,14 @@ See [`@affine/ios`](../ios/CLAUDE.md) for the shared architecture (proxy.ts toke
 
 ## Key differences from iOS
 
-| Feature | iOS | Android |
-|---|---|---|
-| Status/nav bar theme | — | `affine-theme` plugin |
-| AI button | — | `ai-button` plugin |
-| In-app browser | `@capacitor/browser` | `@capgo/inappbrowser` |
-| Status bar | — | `@capacitor/status-bar` |
-| Dev server address | `localhost` | `10.0.2.2` (emulator host alias) |
-| Haptics | `@capacitor/haptics` | `@capacitor/haptics` |
+| Feature              | iOS                  | Android                          |
+| -------------------- | -------------------- | -------------------------------- |
+| Status/nav bar theme | —                    | `affine-theme` plugin            |
+| AI button            | —                    | `ai-button` plugin               |
+| In-app browser       | `@capacitor/browser` | `@capgo/inappbrowser`            |
+| Status bar           | —                    | `@capacitor/status-bar`          |
+| Dev server address   | `localhost`          | `10.0.2.2` (emulator host alias) |
+| Haptics              | `@capacitor/haptics` | `@capacitor/haptics`             |
 
 ---
 

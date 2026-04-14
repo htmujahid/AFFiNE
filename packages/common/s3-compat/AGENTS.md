@@ -4,7 +4,7 @@ S3-compatible object storage client. Wraps AWS4 request signing and multipart up
 
 ## Layout
 
-```
+```text
 src/
   index.ts    # Entire implementation (~530 lines): types, S3CompatClient interface, S3Compat class
 ```
@@ -17,23 +17,23 @@ Single-file module. No subdirectories.
 
 ```typescript
 type S3CompatCredentials = {
-  accessKeyId: string
-  secretAccessKey: string
-  sessionToken?: string       // for temporary credentials (STS)
-}
+  accessKeyId: string;
+  secretAccessKey: string;
+  sessionToken?: string; // for temporary credentials (STS)
+};
 
 type S3CompatConfig = {
-  endpoint: string            // e.g. "https://s3.us-east-1.amazonaws.com" or "http://localhost:9000"
-  region: string              // e.g. "us-east-1"
-  bucket: string
-  forcePathStyle?: boolean    // true for MinIO / LocalStack (puts bucket in path, not hostname)
-  requestTimeoutMs?: number
-  minPartSize?: number        // minimum multipart part size in bytes
+  endpoint: string; // e.g. "https://s3.us-east-1.amazonaws.com" or "http://localhost:9000"
+  region: string; // e.g. "us-east-1"
+  bucket: string;
+  forcePathStyle?: boolean; // true for MinIO / LocalStack (puts bucket in path, not hostname)
+  requestTimeoutMs?: number;
+  minPartSize?: number; // minimum multipart part size in bytes
   presign?: {
-    expiresInSeconds: number  // presigned URL TTL
-    signContentTypeForPut?: boolean
-  }
-}
+    expiresInSeconds: number; // presigned URL TTL
+    signContentTypeForPut?: boolean;
+  };
+};
 ```
 
 ---
@@ -43,49 +43,35 @@ type S3CompatConfig = {
 ```typescript
 interface S3CompatClient {
   // ─── Basic operations ──────────────────────────────────────────────────────
-  putObject(
-    key: string,
-    body: Blob | Buffer | Uint8Array | ReadableStream | Readable,
-    meta?: { contentType?: string; contentLength?: number }
-  ): Promise<void>
+  putObject(key: string, body: Blob | Buffer | Uint8Array | ReadableStream | Readable, meta?: { contentType?: string; contentLength?: number }): Promise<void>;
 
-  getObjectResponse(key: string): Promise<Response | null>  // null = key not found
+  getObjectResponse(key: string): Promise<Response | null>; // null = key not found
 
   headObject(key: string): Promise<
-    | { contentType?: string; contentLength?: number; lastModified?: Date; checksumCRC32?: string }
-    | undefined  // undefined = key not found
-  >
+    { contentType?: string; contentLength?: number; lastModified?: Date; checksumCRC32?: string } | undefined // undefined = key not found
+  >;
 
-  deleteObject(key: string): Promise<void>
+  deleteObject(key: string): Promise<void>;
 
-  listObjectsV2(prefix?: string): Promise<ListObjectsItem[]>
+  listObjectsV2(prefix?: string): Promise<ListObjectsItem[]>;
 
   // ─── Multipart upload ───────────────────────────────────────────────────────
-  createMultipartUpload(
-    key: string,
-    meta?: { contentType?: string }
-  ): Promise<{ uploadId: string }>
+  createMultipartUpload(key: string, meta?: { contentType?: string }): Promise<{ uploadId: string }>;
 
-  uploadPart(
-    key: string,
-    uploadId: string,
-    partNumber: number,
-    body: Blob | Buffer | Uint8Array | ReadableStream | Readable,
-    meta?: { contentLength?: number }
-  ): Promise<{ etag: string }>
+  uploadPart(key: string, uploadId: string, partNumber: number, body: Blob | Buffer | Uint8Array | ReadableStream | Readable, meta?: { contentLength?: number }): Promise<{ etag: string }>;
 
-  listParts(key: string, uploadId: string): Promise<ListPartItem[] | undefined>
+  listParts(key: string, uploadId: string): Promise<ListPartItem[] | undefined>;
 
-  completeMultipartUpload(key: string, uploadId: string, parts: ListPartItem[]): Promise<void>
+  completeMultipartUpload(key: string, uploadId: string, parts: ListPartItem[]): Promise<void>;
 
-  abortMultipartUpload(key: string, uploadId: string): Promise<void>
+  abortMultipartUpload(key: string, uploadId: string): Promise<void>;
 
   // ─── Presigned URLs ─────────────────────────────────────────────────────────
-  presignGetObject(key: string): Promise<PresignedResult>
+  presignGetObject(key: string): Promise<PresignedResult>;
 
-  presignPutObject(key: string, meta?: { contentType?: string }): Promise<PresignedResult>
+  presignPutObject(key: string, meta?: { contentType?: string }): Promise<PresignedResult>;
 
-  presignUploadPart(key: string, uploadId: string, partNumber: number): Promise<PresignedResult>
+  presignUploadPart(key: string, uploadId: string, partNumber: number): Promise<PresignedResult>;
 }
 ```
 
@@ -95,27 +81,27 @@ interface S3CompatClient {
 
 ```typescript
 type ListObjectsItem = {
-  key: string
-  lastModified: Date
-  contentLength: number
-}
+  key: string;
+  lastModified: Date;
+  contentLength: number;
+};
 
 type ListPartItem = {
-  partNumber: number
-  etag: string
-}
+  partNumber: number;
+  etag: string;
+};
 
 type PresignedResult = {
-  url: string
-  headers?: Record<string, string>
-  expiresAt: Date
-}
+  url: string;
+  headers?: Record<string, string>;
+  expiresAt: Date;
+};
 
 type ParsedListParts = {
-  parts: ListPartItem[]
-  isTruncated: boolean
-  nextPartNumberMarker?: string
-}
+  parts: ListPartItem[];
+  isTruncated: boolean;
+  nextPartNumberMarker?: string;
+};
 ```
 
 ---
@@ -126,8 +112,8 @@ Concrete implementation of `S3CompatClient`.
 
 ```typescript
 class S3Compat implements S3CompatClient {
-  constructor(config: S3CompatConfig, credentials: S3CompatCredentials)
-  static fromConfig(config: S3CompatConfig, credentials: S3CompatCredentials): S3Compat
+  constructor(config: S3CompatConfig, credentials: S3CompatCredentials);
+  static fromConfig(config: S3CompatConfig, credentials: S3CompatCredentials): S3Compat;
   // All interface methods implemented
 }
 ```
@@ -135,17 +121,14 @@ class S3Compat implements S3CompatClient {
 ### Factory function
 
 ```typescript
-function createS3CompatClient(
-  config: S3CompatConfig,
-  credentials: S3CompatCredentials
-): S3Compat
+function createS3CompatClient(config: S3CompatConfig, credentials: S3CompatCredentials): S3Compat;
 ```
 
 ### XML utility
 
 ```typescript
 // Parse the XML response from S3 ListParts
-function parseListPartsXml(xml: string): ParsedListParts
+function parseListPartsXml(xml: string): ParsedListParts;
 ```
 
 ---
@@ -153,19 +136,23 @@ function parseListPartsXml(xml: string): ParsedListParts
 ## Implementation details
 
 **URL style:**
+
 - `forcePathStyle: false` (default) → virtual-hosted style: `https://<bucket>.<host>/<key>`
 - `forcePathStyle: true` → path style: `https://<host>/<bucket>/<key>` (required for MinIO/LocalStack)
 
 **Signing:**
+
 - All requests are signed using AWS Signature Version 4 (`aws4` package)
 - Presigned URLs embed the signature in query parameters (not headers)
 - Session tokens are forwarded in `X-Amz-Security-Token`
 
 **Stream support:**
+
 - Accepts `Blob`, `Buffer`, `Uint8Array`, `ReadableStream` (web), and `Readable` (Node.js)
 - Automatically sets `duplex: 'half'` when required by the fetch spec for streaming bodies
 
 **Error handling:**
+
 - Parses XML error body from S3 error responses
 - `NoSuchKey` / `NoSuchUpload` return `null` / `undefined` instead of throwing
 - Other HTTP errors throw with the S3 error code extracted from the XML body
@@ -175,7 +162,7 @@ function parseListPartsXml(xml: string): ParsedListParts
 ## Usage
 
 ```typescript
-import { S3Compat } from '@affine/s3-compat'
+import { S3Compat } from '@affine/s3-compat';
 
 const client = new S3Compat(
   {
@@ -188,28 +175,28 @@ const client = new S3Compat(
     accessKeyId: process.env.R2_ACCESS_KEY_ID,
     secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
   }
-)
+);
 
 // Upload
-await client.putObject('user/avatar.png', fileBuffer, { contentType: 'image/png' })
+await client.putObject('user/avatar.png', fileBuffer, { contentType: 'image/png' });
 
 // Download
-const response = await client.getObjectResponse('user/avatar.png')
+const response = await client.getObjectResponse('user/avatar.png');
 if (response) {
-  const blob = await response.blob()
+  const blob = await response.blob();
 }
 
 // Presign for direct client upload
 const { url, headers } = await client.presignPutObject('uploads/doc.pdf', {
   contentType: 'application/pdf',
-})
+});
 // → send url + headers to the browser for a direct PUT
 
 // Large file via multipart
-const { uploadId } = await client.createMultipartUpload('large-file.bin')
-const part1 = await client.uploadPart('large-file.bin', uploadId, 1, chunk1)
-const part2 = await client.uploadPart('large-file.bin', uploadId, 2, chunk2)
-await client.completeMultipartUpload('large-file.bin', uploadId, [part1, part2])
+const { uploadId } = await client.createMultipartUpload('large-file.bin');
+const part1 = await client.uploadPart('large-file.bin', uploadId, 1, chunk1);
+const part2 = await client.uploadPart('large-file.bin', uploadId, 2, chunk2);
+await client.completeMultipartUpload('large-file.bin', uploadId, [part1, part2]);
 ```
 
 ---

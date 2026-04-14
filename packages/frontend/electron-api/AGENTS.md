@@ -4,7 +4,7 @@ Type bridge between the Electron main/helper processes and the renderer. Exports
 
 ## How it fits together
 
-```
+```text
 Renderer (@affine/electron-renderer)
   ├── import { apis, events, appInfo, sharedStorage } from '@affine/electron-api'
   │     (gets fully-typed access to all IPC channels)
@@ -24,18 +24,20 @@ Renderer (@affine/electron-renderer)
 ## Exported globals
 
 ```typescript
-import { apis, events, appInfo, sharedStorage } from '@affine/electron-api'
+import { apis, events, appInfo, sharedStorage } from '@affine/electron-api';
 
 // Is this running inside Electron?
-if (appInfo?.electron) { /* safe to use apis/events */ }
+if (appInfo?.electron) {
+  /* safe to use apis/events */
+}
 ```
 
-| Export | Type | Description |
-|---|---|---|
-| `appInfo` | `AppInfo \| null` | Electron runtime metadata (windowName, scheme, viewId) |
-| `apis` | `ClientHandler \| undefined` | All IPC handler methods |
-| `events` | `ClientEvents \| undefined` | All event subscriptions |
-| `sharedStorage` | `SharedStorage \| undefined` | Cross-window key-value state |
+| Export          | Type                         | Description                                            |
+| --------------- | ---------------------------- | ------------------------------------------------------ |
+| `appInfo`       | `AppInfo \| null`            | Electron runtime metadata (windowName, scheme, viewId) |
+| `apis`          | `ClientHandler \| undefined` | All IPC handler methods                                |
+| `events`        | `ClientEvents \| undefined`  | All event subscriptions                                |
+| `sharedStorage` | `SharedStorage \| undefined` | Cross-window key-value state                           |
 
 ---
 
@@ -43,16 +45,11 @@ if (appInfo?.electron) { /* safe to use apis/events */ }
 
 ```typescript
 type AppInfo = {
-  electron: true
-  windowName: string   // 'main' | 'onboarding' | 'popup' | 'shell'
-  viewId: string       // passed via process.argv from main
-  scheme:
-    | 'affine'
-    | 'affine-canary'
-    | 'affine-beta'
-    | 'affine-internal'
-    | 'affine-dev'
-}
+  electron: true;
+  windowName: string; // 'main' | 'onboarding' | 'popup' | 'shell'
+  viewId: string; // passed via process.argv from main
+  scheme: 'affine' | 'affine-canary' | 'affine-beta' | 'affine-internal' | 'affine-dev';
+};
 ```
 
 ---
@@ -62,38 +59,38 @@ type AppInfo = {
 All handler calls return a `Promise` (async-call-rpc wraps everything). Call from the renderer:
 
 ```typescript
-await apis.ui.handleMinimizeApp()
-await apis.clipboard.writeText('hello')
-await apis.updater.checkForUpdates()
+await apis.ui.handleMinimizeApp();
+await apis.clipboard.writeText('hello');
+await apis.updater.checkForUpdates();
 ```
 
 ### Main process handler namespaces
 
-| Namespace | Key methods | Purpose |
-|---|---|---|
-| `ui` | Window ops, file dialogs, tab management, theme | Window/UI control |
-| `clipboard` | `readText()`, `writeText()`, `readFiles()` | Clipboard access |
-| `updater` | `checkForUpdates()`, `downloadUpdate()` | Auto-update |
-| `configStorage` | `get(key)`, `set(key, val)`, `clear()` | Persistent app config file |
-| `findInPage` | `find(text, opts)`, `stopFind()` | Ctrl+F in-page search |
-| `sharedStorage` | `get*()`, `set*()`, `del*()`, `clear*()`, `keys*()` | Cross-window state ops |
-| `worker` | `create()`, `destroy()` | Background worker lifecycle |
-| `recording` | `start()`, `stop()`, `getDevices()` | Screen recording |
-| `popup` | Window popup management | Popup window ops |
-| `i18n` | `changeLanguage(lang)` | Locale switching in main |
-| `debug` | `revealLogFile()`, `logFilePath()` | Dev/debug tools |
+| Namespace       | Key methods                                         | Purpose                     |
+| --------------- | --------------------------------------------------- | --------------------------- |
+| `ui`            | Window ops, file dialogs, tab management, theme     | Window/UI control           |
+| `clipboard`     | `readText()`, `writeText()`, `readFiles()`          | Clipboard access            |
+| `updater`       | `checkForUpdates()`, `downloadUpdate()`             | Auto-update                 |
+| `configStorage` | `get(key)`, `set(key, val)`, `clear()`              | Persistent app config file  |
+| `findInPage`    | `find(text, opts)`, `stopFind()`                    | Ctrl+F in-page search       |
+| `sharedStorage` | `get*()`, `set*()`, `del*()`, `clear*()`, `keys*()` | Cross-window state ops      |
+| `worker`        | `create()`, `destroy()`                             | Background worker lifecycle |
+| `recording`     | `start()`, `stop()`, `getDevices()`                 | Screen recording            |
+| `popup`         | Window popup management                             | Popup window ops            |
+| `i18n`          | `changeLanguage(lang)`                              | Locale switching in main    |
+| `debug`         | `revealLogFile()`, `logFilePath()`                  | Dev/debug tools             |
 
 ### Helper process handler namespaces
 
 Run in a separate Node.js process (heavy I/O, never blocks main):
 
-| Namespace | Purpose |
-|---|---|
-| `nbstore` | SQLite storage adapter (current) |
-| `db` | Legacy SQLite v1 adapter |
-| `workspace` | Workspace file I/O |
-| `dialog` | Native file open/save dialogs |
-| `preview` | Document thumbnail generation |
+| Namespace   | Purpose                          |
+| ----------- | -------------------------------- |
+| `nbstore`   | SQLite storage adapter (current) |
+| `db`        | Legacy SQLite v1 adapter         |
+| `workspace` | Workspace file I/O               |
+| `dialog`    | Native file open/save dialogs    |
+| `preview`   | Document thumbnail generation    |
 
 ---
 
@@ -104,30 +101,30 @@ Each event subscriber returns an unsubscribe function:
 ```typescript
 // Subscribe
 const unsub = events.ui.onMaximized((isMaximized: boolean) => {
-  setWindowMaximized(isMaximized)
-})
+  setWindowMaximized(isMaximized);
+});
 
 // Unsubscribe
-unsub()
+unsub();
 ```
 
 ### Main process event namespaces
 
-| Namespace | Key events | Purpose |
-|---|---|---|
-| `ui` | `onMaximized`, `onFullScreen`, `onTabViewsMetaChanged`, `onTabAction`, `onToggleRightSidebar`, `onTabsStatusChange`, `onActiveTabChanged`, `onTabGoToRequest`, `onTabShellViewActiveChange`, `onAuthenticationRequest`, `onCloseView` | Window & multi-tab state |
-| `updater` | `update-available`, `update-downloaded`, `update-error` | Auto-update lifecycle |
-| `applicationMenu` | OS-level menu actions | App menu callbacks |
-| `sharedStorage` | `onGlobalStateChanged`, `onGlobalCacheChanged` | Cross-window state sync |
-| `recording` | Recording state changes | Screen recording |
-| `popup` | Popup window events | Popup lifecycle |
-| `power` | `power-source` | Battery / AC power changes |
+| Namespace         | Key events                                                                                                                                                                                                                            | Purpose                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `ui`              | `onMaximized`, `onFullScreen`, `onTabViewsMetaChanged`, `onTabAction`, `onToggleRightSidebar`, `onTabsStatusChange`, `onActiveTabChanged`, `onTabGoToRequest`, `onTabShellViewActiveChange`, `onAuthenticationRequest`, `onCloseView` | Window & multi-tab state   |
+| `updater`         | `update-available`, `update-downloaded`, `update-error`                                                                                                                                                                               | Auto-update lifecycle      |
+| `applicationMenu` | OS-level menu actions                                                                                                                                                                                                                 | App menu callbacks         |
+| `sharedStorage`   | `onGlobalStateChanged`, `onGlobalCacheChanged`                                                                                                                                                                                        | Cross-window state sync    |
+| `recording`       | Recording state changes                                                                                                                                                                                                               | Screen recording           |
+| `popup`           | Popup window events                                                                                                                                                                                                                   | Popup lifecycle            |
+| `power`           | `power-source`                                                                                                                                                                                                                        | Battery / AC power changes |
 
 ### Helper process event namespaces
 
-| Namespace | Purpose |
-|---|---|
-| `db` | Legacy DB events |
+| Namespace   | Purpose                      |
+| ----------- | ---------------------------- |
+| `db`        | Legacy DB events             |
 | `workspace` | Workspace file change events |
 
 ---
@@ -138,29 +135,29 @@ Persists state across Electron windows (main app, popup, shell). Backed by `Memo
 
 ```typescript
 type SharedStorage = {
-  globalState: MementoLike
-  globalCache: MementoLike
-}
+  globalState: MementoLike;
+  globalCache: MementoLike;
+};
 
 type MementoLike = {
-  get<T>(key: string): T | undefined
-  set(key: string, value: unknown): void
-  del(key: string): void
-  clear(): void
-  keys(): string[]
-  watch<T>(key: string, cb: (value: T | undefined) => void): () => void  // returns unsubscribe
-  ready: Promise<void>  // await before first read
-}
+  get<T>(key: string): T | undefined;
+  set(key: string, value: unknown): void;
+  del(key: string): void;
+  clear(): void;
+  keys(): string[];
+  watch<T>(key: string, cb: (value: T | undefined) => void): () => void; // returns unsubscribe
+  ready: Promise<void>; // await before first read
+};
 ```
 
 ```typescript
 // Usage in renderer
-await sharedStorage.globalState.ready
-sharedStorage.globalState.set('sidebar-width', 240)
+await sharedStorage.globalState.ready;
+sharedStorage.globalState.set('sidebar-width', 240);
 
 const unsub = sharedStorage.globalState.watch('sidebar-width', width => {
-  setSidebarWidth(width ?? 240)
-})
+  setSidebarWidth(width ?? 240);
+});
 ```
 
 ---
@@ -169,7 +166,7 @@ const unsub = sharedStorage.globalState.watch('sidebar-width', width => {
 
 ### Main process handlers
 
-```
+```text
 renderer → ipcRenderer.invoke('AFFINE_API_CHANNEL_NAME', 'namespace:method', ...args)
         → main ipcMain.handle → allHandlers[namespace][method](event, ...args)
         → Promise result back to renderer
@@ -177,7 +174,7 @@ renderer → ipcRenderer.invoke('AFFINE_API_CHANNEL_NAME', 'namespace:method', .
 
 ### Helper process handlers
 
-```
+```text
 renderer → MessagePort → async-call-rpc (RPC channel: 'namespace:method')
          → helper process handler
          → Promise result back to renderer
@@ -187,7 +184,7 @@ The `MessagePort` is established at preload startup: main process spawns the hel
 
 ### Main process events
 
-```
+```text
 main → ipcMain.emit('AFFINE_EVENT_CHANNEL_NAME', channel, ...args)
      → ipcRenderer.on → delivered to renderer subscriber
 ```
@@ -208,21 +205,21 @@ Renderer subscribes/unsubscribes by sending `AFFINE_EVENT_SUBSCRIBE_CHANNEL_NAME
 ## Usage in `@affine/electron-renderer`
 
 ```typescript
-import { apis, events, appInfo, sharedStorage } from '@affine/electron-api'
+import { apis, events, appInfo, sharedStorage } from '@affine/electron-api';
 
 // Guard for Electron-only code
 if (appInfo?.electron) {
   // Window title bar controls
-  await apis.ui.handleMaximizeApp()
+  await apis.ui.handleMaximizeApp();
 
   // Listen for tab changes
   const unsub = events.ui.onActiveTabChanged(tabId => {
-    setActiveTab(tabId)
-  })
+    setActiveTab(tabId);
+  });
 
   // Shared state across windows
-  await sharedStorage.globalState.ready
-  sharedStorage.globalState.set('last-opened-workspace', workspaceId)
+  await sharedStorage.globalState.ready;
+  sharedStorage.globalState.set('last-opened-workspace', workspaceId);
 }
 ```
 
@@ -232,7 +229,7 @@ In `@affine/core`, the `DesktopApiService` wraps this package and exposes it thr
 
 ## Export paths
 
-```
+```text
 @affine/electron-api           → src/index.ts  (types + globals)
 @affine/electron-api/web-worker → src/web-worker.ts  (planned, not yet created)
 ```

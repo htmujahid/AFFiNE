@@ -6,7 +6,7 @@ Audio capture on macOS uses ScreenCaptureKit via the `ShareableContent` NAPI cla
 
 ## Layout
 
-```
+```text
 src/
   lib.rs              # Crate root — pub use of all module exports
   hashcash.rs         # mintChallengeResponse(), verifyChallengeResponse()
@@ -92,20 +92,20 @@ decodeAudioSync(
 
 ```typescript
 type RecordingStartOptions = {
-  sessionId?: string        // auto-generated if omitted
-  outputDir: string
-  processId: number         // -1 for global system audio
-  sampleRate?: number
-}
+  sessionId?: string; // auto-generated if omitted
+  outputDir: string;
+  processId: number; // -1 for global system audio
+  sampleRate?: number;
+};
 
-type RecordingSessionMeta = { sessionId: string; startedAt: Date }
+type RecordingSessionMeta = { sessionId: string; startedAt: Date };
 
 type RecordingArtifact = {
-  sessionId: string
-  path: string              // path to .ogg file
-  duration: number          // seconds
-  sampleRate: number
-}
+  sessionId: string;
+  path: string; // path to .ogg file
+  duration: number; // seconds
+  sampleRate: number;
+};
 ```
 
 ---
@@ -117,59 +117,59 @@ Connection-pooled multi-workspace SQLite storage (v2 schema). All methods are as
 ```typescript
 class DocStoragePool {
   // Lifecycle
-  connect(universalId: string, path: string): Promise<void>
-  disconnect(universalId: string): Promise<void>
-  setSpaceId(universalId: string, spaceId: string): Promise<void>
+  connect(universalId: string, path: string): Promise<void>;
+  disconnect(universalId: string): Promise<void>;
+  setSpaceId(universalId: string, spaceId: string): Promise<void>;
 
   // Documents
-  pushUpdate(universalId: string, docId: string, update: Uint8Array): Promise<DocClock>
-  getDocSnapshot(universalId: string, docId: string): Promise<DocRecord | null>
-  setDocSnapshot(universalId: string, snapshot: DocRecord): Promise<boolean>
-  getDocUpdates(universalId: string, docId: string): Promise<Array<DocUpdate>>
-  markUpdatesMerged(universalId: string, docId: string, updates: Array<DocUpdate>): Promise<number>
-  deleteDoc(universalId: string, docId: string): Promise<void>
-  getDocClocks(universalId: string, after?: Date): Promise<Array<DocClock>>
-  getDocClock(universalId: string, docId: string): Promise<DocClock | null>
+  pushUpdate(universalId: string, docId: string, update: Uint8Array): Promise<DocClock>;
+  getDocSnapshot(universalId: string, docId: string): Promise<DocRecord | null>;
+  setDocSnapshot(universalId: string, snapshot: DocRecord): Promise<boolean>;
+  getDocUpdates(universalId: string, docId: string): Promise<Array<DocUpdate>>;
+  markUpdatesMerged(universalId: string, docId: string, updates: Array<DocUpdate>): Promise<number>;
+  deleteDoc(universalId: string, docId: string): Promise<void>;
+  getDocClocks(universalId: string, after?: Date): Promise<Array<DocClock>>;
+  getDocClock(universalId: string, docId: string): Promise<DocClock | null>;
 
   // Blobs
-  getBlob(universalId: string, key: string): Promise<Blob | null>
-  setBlob(universalId: string, blob: SetBlob): Promise<void>
-  deleteBlob(universalId: string, key: string, permanently: boolean): Promise<void>
-  listBlobs(universalId: string): Promise<Array<ListedBlob>>
-  releaseBlobs(universalId: string): Promise<void>
+  getBlob(universalId: string, key: string): Promise<Blob | null>;
+  setBlob(universalId: string, blob: SetBlob): Promise<void>;
+  deleteBlob(universalId: string, key: string, permanently: boolean): Promise<void>;
+  listBlobs(universalId: string): Promise<Array<ListedBlob>>;
+  releaseBlobs(universalId: string): Promise<void>;
 
   // Peer sync clocks
-  getPeerRemoteClocks(universalId: string, peer: string): Promise<Array<DocClock>>
-  getPeerRemoteClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>
-  setPeerRemoteClock(universalId: string, peer: string, clock: DocClock): Promise<void>
-  getPeerPulledRemoteClocks(universalId: string, peer: string): Promise<Array<DocClock>>
-  getPeerPulledRemoteClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>
-  setPeerPulledRemoteClock(universalId: string, peer: string, clock: DocClock): Promise<void>
-  getPeerPushedClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>
-  getPeerPushedClocks(universalId: string, peer: string): Promise<Array<DocClock>>
-  setPeerPushedClock(universalId: string, peer: string, clock: DocClock): Promise<void>
-  clearClocks(universalId: string): Promise<void>
+  getPeerRemoteClocks(universalId: string, peer: string): Promise<Array<DocClock>>;
+  getPeerRemoteClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>;
+  setPeerRemoteClock(universalId: string, peer: string, clock: DocClock): Promise<void>;
+  getPeerPulledRemoteClocks(universalId: string, peer: string): Promise<Array<DocClock>>;
+  getPeerPulledRemoteClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>;
+  setPeerPulledRemoteClock(universalId: string, peer: string, clock: DocClock): Promise<void>;
+  getPeerPushedClock(universalId: string, peer: string, docId: string): Promise<DocClock | null>;
+  getPeerPushedClocks(universalId: string, peer: string): Promise<Array<DocClock>>;
+  setPeerPushedClock(universalId: string, peer: string, clock: DocClock): Promise<void>;
+  clearClocks(universalId: string): Promise<void>;
 
   // Blob sync state
-  getBlobUploadedAt(universalId: string, peer: string, blobId: string): Promise<Date | null>
-  setBlobUploadedAt(universalId: string, peer: string, blobId: string, uploadedAt: Date | null): Promise<void>
+  getBlobUploadedAt(universalId: string, peer: string, blobId: string): Promise<Date | null>;
+  setBlobUploadedAt(universalId: string, peer: string, blobId: string, uploadedAt: Date | null): Promise<void>;
 
   // Full-text search
-  ftsAddDocument(universalId: string, id: string, title: string, body: string): Promise<void>
-  ftsDeleteDocument(universalId: string, id: string): Promise<void>
-  ftsGetDocument(universalId: string, id: string): Promise<string | null>
-  ftsSearch(universalId: string, query: string, limit: number): Promise<Array<NativeSearchHit>>
-  ftsGetMatches(universalId: string, id: string, query: string): Promise<Array<NativeMatch>>
-  ftsFlushIndex(universalId: string): Promise<void>
-  ftsIndexVersion(universalId: string): Promise<number>
+  ftsAddDocument(universalId: string, id: string, title: string, body: string): Promise<void>;
+  ftsDeleteDocument(universalId: string, id: string): Promise<void>;
+  ftsGetDocument(universalId: string, id: string): Promise<string | null>;
+  ftsSearch(universalId: string, query: string, limit: number): Promise<Array<NativeSearchHit>>;
+  ftsGetMatches(universalId: string, id: string, query: string): Promise<Array<NativeMatch>>;
+  ftsFlushIndex(universalId: string): Promise<void>;
+  ftsIndexVersion(universalId: string): Promise<number>;
 
   // Indexer sync tracking
-  getDocIndexedClock(universalId: string, docId: string): Promise<DocIndexedClock | null>
-  setDocIndexedClock(universalId: string, clock: DocIndexedClock): Promise<void>
-  clearDocIndexedClock(universalId: string, docId: string): Promise<void>
+  getDocIndexedClock(universalId: string, docId: string): Promise<DocIndexedClock | null>;
+  setDocIndexedClock(universalId: string, clock: DocIndexedClock): Promise<void>;
+  clearDocIndexedClock(universalId: string, docId: string): Promise<void>;
 
   // Doc crawl (for indexer — returns block structure + title + summary)
-  crawlDocData(universalId: string, docId: string): Promise<NativeCrawlResult | null>
+  crawlDocData(universalId: string, docId: string): Promise<NativeCrawlResult | null>;
 }
 ```
 
@@ -181,10 +181,10 @@ Single-database instance (used for validation and import).
 
 ```typescript
 class DocStorage {
-  constructor(path: string)
-  validate(): Promise<void>
-  setSpaceId(spaceId: string): Promise<void>
-  vacuumInto(destPath: string): Promise<void>
+  constructor(path: string);
+  validate(): Promise<void>;
+  setSpaceId(spaceId: string): Promise<void>;
+  vacuumInto(destPath: string): Promise<void>;
   // + all blob/doc/peer/fts methods (same as DocStoragePool but without universalId)
 }
 ```
@@ -197,27 +197,27 @@ Reads AFFiNE's old v1 database format. Used during migration from v1 to v2.
 
 ```typescript
 class SqliteConnection {
-  constructor(path: string)
-  static validate(path: string): Promise<ValidationResult>  // 'MissingTable' | 'MissingDocId' | 'Valid'
+  constructor(path: string);
+  static validate(path: string): Promise<ValidationResult>; // 'MissingTable' | 'MissingDocId' | 'Valid'
 
   // Doc operations (v1 schema)
-  getUpdates(docId: string): Promise<Array<UpdateRow>>
-  getAllUpdates(): Promise<Array<UpdateRow>>
-  applyUpdate(docId: string, update: Uint8Array): Promise<void>
-  replaceUpdates(docId: string, updates: Array<UpdateRow>): Promise<void>
+  getUpdates(docId: string): Promise<Array<UpdateRow>>;
+  getAllUpdates(): Promise<Array<UpdateRow>>;
+  applyUpdate(docId: string, update: Uint8Array): Promise<void>;
+  replaceUpdates(docId: string, updates: Array<UpdateRow>): Promise<void>;
 
   // Blob operations (v1 schema)
-  getBlob(key: string): Promise<Uint8Array | null>
-  setBlob(key: string, data: Uint8Array): Promise<void>
-  deleteBlob(key: string): Promise<void>
-  listBlobs(): Promise<Array<string>>
+  getBlob(key: string): Promise<Uint8Array | null>;
+  setBlob(key: string, data: Uint8Array): Promise<void>;
+  deleteBlob(key: string): Promise<void>;
+  listBlobs(): Promise<Array<string>>;
 
   // Maintenance
-  getDocTimestamps(after?: Date): Promise<Record<string, number>>
-  checkpoint(): Promise<void>
-  vacuumInto(destPath: string): Promise<void>
-  migrateAddDocId(): Promise<void>
-  close(): Promise<void>
+  getDocTimestamps(after?: Date): Promise<Record<string, number>>;
+  checkpoint(): Promise<void>;
+  vacuumInto(destPath: string): Promise<void>;
+  migrateAddDocId(): Promise<void>;
+  close(): Promise<void>;
 }
 ```
 
@@ -259,37 +259,41 @@ verifyChallengeResponse(response: string, bits: number, resource: string): Promi
 ## Key data types
 
 ```typescript
-type DocRecord  = { docId: string; bin: Uint8Array; timestamp: Date }
-type DocUpdate  = { docId: string; bin: Uint8Array; timestamp: Date }
-type DocClock   = { docId: string; timestamp: Date }
-type DocIndexedClock = { docId: string; timestamp: Date }
+type DocRecord = { docId: string; bin: Uint8Array; timestamp: Date };
+type DocUpdate = { docId: string; bin: Uint8Array; timestamp: Date };
+type DocClock = { docId: string; timestamp: Date };
+type DocIndexedClock = { docId: string; timestamp: Date };
 
-type Blob       = { key: string; data: Uint8Array; mime: string; createdAt?: Date }
-type SetBlob    = { key: string; data: Uint8Array; mime: string }
-type ListedBlob = { key: string; size: number; mime: string; createdAt?: Date }
+type Blob = { key: string; data: Uint8Array; mime: string; createdAt?: Date };
+type SetBlob = { key: string; data: Uint8Array; mime: string };
+type ListedBlob = { key: string; size: number; mime: string; createdAt?: Date };
 
-type NativeSearchHit = { id: string; score: number; matchedTerms: string[] }
-type NativeMatch     = { start: number; end: number }
+type NativeSearchHit = { id: string; score: number; matchedTerms: string[] };
+type NativeMatch = { start: number; end: number };
 
-type NativeCrawlResult = { blocks: NativeBlockInfo[]; title: string; summary: string }
-type NativeBlockInfo   = {
-  blockId: string; flavour: string
-  content?: string[]; blob?: string[]
-  refDocId?: string[]; refInfo?: string[]
-  parentFlavour?: string; parentBlockId?: string
-  additional?: string
-}
+type NativeCrawlResult = { blocks: NativeBlockInfo[]; title: string; summary: string };
+type NativeBlockInfo = {
+  blockId: string;
+  flavour: string;
+  content?: string[];
+  blob?: string[];
+  refDocId?: string[];
+  refInfo?: string[];
+  parentFlavour?: string;
+  parentBlockId?: string;
+  additional?: string;
+};
 ```
 
 ---
 
 ## Platform targets
 
-| Platform | Architecture |
-|---|---|
-| macOS | x86_64, aarch64 (Apple Silicon) |
-| Linux | x86_64, aarch64 |
-| Windows | x86_64, aarch64 |
+| Platform | Architecture                    |
+| -------- | ------------------------------- |
+| macOS    | x86_64, aarch64 (Apple Silicon) |
+| Linux    | x86_64, aarch64                 |
+| Windows  | x86_64, aarch64                 |
 
 Pre-built `.node` binaries for each target are committed to the repo and selected at runtime by `index.js`.
 
@@ -297,17 +301,17 @@ Pre-built `.node` binaries for each target are committed to the repo and selecte
 
 ## vs. `@affine/server-native` (backend)
 
-| Feature | `@affine/native` (frontend) | `@affine/server-native` (backend) |
-|---|---|---|
-| Audio capture | ✓ (ScreenCaptureKit/WASAPI) | — |
-| Audio decode | ✓ (symphonia + rubato) | — |
-| Doc rendering | ✓ (Mermaid, Typst) | — |
-| SQLite storage | ✓ (v1 + v2 schema) | — |
-| LLM dispatch | — | ✓ |
-| Tokenizer | — | ✓ |
-| Image/PDF/Office | — | ✓ |
-| Hashcash | ✓ | ✓ |
-| File type detection | — | ✓ |
+| Feature             | `@affine/native` (frontend) | `@affine/server-native` (backend) |
+| ------------------- | --------------------------- | --------------------------------- |
+| Audio capture       | ✓ (ScreenCaptureKit/WASAPI) | —                                 |
+| Audio decode        | ✓ (symphonia + rubato)      | —                                 |
+| Doc rendering       | ✓ (Mermaid, Typst)          | —                                 |
+| SQLite storage      | ✓ (v1 + v2 schema)          | —                                 |
+| LLM dispatch        | —                           | ✓                                 |
+| Tokenizer           | —                           | ✓                                 |
+| Image/PDF/Office    | —                           | ✓                                 |
+| Hashcash            | ✓                           | ✓                                 |
+| File type detection | —                           | ✓                                 |
 
 ---
 

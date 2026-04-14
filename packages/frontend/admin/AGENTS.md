@@ -4,7 +4,7 @@ Self-hosted admin panel for AFFiNE server management. A standalone React SPA (Re
 
 ## Layout
 
-```
+```text
 src/
   index.tsx              # React DOM entry point
   app.tsx                # All route definitions + auth wrapper
@@ -44,17 +44,17 @@ src/
 
 All routes are nested under `/admin/`. The root loader checks `config.initialized` and redirects to `/admin/setup` if the server has not been configured yet.
 
-| Path | Module | Access |
-|---|---|---|
-| `/admin/auth` | `auth/` | Public (redirects away if already logged in) |
-| `/admin/setup` | `setup/` | Public (only shown when `initialized === false`) |
-| `/admin/dashboard` | `dashboard/` | Admin only (Cloud/SaaS) |
-| `/admin/accounts` | `accounts/` | Admin only |
-| `/admin/workspaces` | `workspaces/` | Admin only |
-| `/admin/queue` | `queue/` | Admin only |
-| `/admin/ai` | `ai/` | Admin only |
-| `/admin/settings` | `settings/` | Admin only |
-| `/admin/about` | `about/` | Admin only |
+| Path                | Module        | Access                                           |
+| ------------------- | ------------- | ------------------------------------------------ |
+| `/admin/auth`       | `auth/`       | Public (redirects away if already logged in)     |
+| `/admin/setup`      | `setup/`      | Public (only shown when `initialized === false`) |
+| `/admin/dashboard`  | `dashboard/`  | Admin only (Cloud/SaaS)                          |
+| `/admin/accounts`   | `accounts/`   | Admin only                                       |
+| `/admin/workspaces` | `workspaces/` | Admin only                                       |
+| `/admin/queue`      | `queue/`      | Admin only                                       |
+| `/admin/ai`         | `ai/`         | Admin only                                       |
+| `/admin/settings`   | `settings/`   | Admin only                                       |
+| `/admin/about`      | `about/`      | Admin only                                       |
 
 ---
 
@@ -65,32 +65,33 @@ All data fetching goes through SWR wrappers over GraphQL. No Redux, no React Que
 ### `useQuery` — GraphQL reads
 
 ```typescript
-import { useQuery } from '../use-query'
+import { useQuery } from '../use-query';
 
-const { data } = useQuery(listUsersQuery, { pagination: { first: 10 } })
+const { data } = useQuery(listUsersQuery, { pagination: { first: 10 } });
 // Suspense-enabled; throws Promise while loading, throws Error on failure
 ```
 
 ### `useMutation` — GraphQL writes
 
 ```typescript
-import { useMutation } from '../use-mutation'
+import { useMutation } from '../use-mutation';
 
-const { trigger } = useMutation(deleteUserMutation)
-await trigger({ id: userId })
+const { trigger } = useMutation(deleteUserMutation);
+await trigger({ id: userId });
 // Automatically invalidates related SWR cache keys
 ```
 
 ### `useQueryInfinite` — Paginated lists
 
 ```typescript
-const { data, loadMore } = useQueryInfinite(listUsersQuery, getKey, options)
+const { data, loadMore } = useQueryInfinite(listUsersQuery, getKey, options);
 // Server-side pagination with cursor
 ```
 
 ### `affineFetch` (`fetch-utils.ts`)
 
 All requests automatically include:
+
 - `x-affine-version` header (build version)
 - `x-affine-csrf-token` from the `affine_csrf_token` cookie
 - `Content-Type: application/json`
@@ -103,7 +104,7 @@ Queue tRPC endpoint: `/api/queue/trpc`
 
 ## Auth flow
 
-```
+```text
 Login form → POST /api/auth/sign-in
   → on success → GraphQL getUserFeaturesQuery
     → check FeatureType.Admin in features
@@ -121,14 +122,14 @@ The auth wrapper in `app.tsx` checks `useCurrentUser()` on every protected route
 
 ```typescript
 // Server initialization state (from adminServerConfigQuery)
-const config = useServerConfig()
+const config = useServerConfig();
 // config.initialized — false = show setup page
 
 // Currently logged-in user + their features
-const { user, features } = useCurrentUser()
+const { user, features } = useCurrentUser();
 
 // Check admin access
-const admin = isAdmin(features)  // checks FeatureType.Admin
+const admin = isAdmin(features); // checks FeatureType.Admin
 ```
 
 ### `accounts/` — User management
@@ -174,22 +175,22 @@ const admin = isAdmin(features)  // checks FeatureType.Admin
 
 Key components used (all in `src/components/ui/`):
 
-| Component | Source |
-|---|---|
-| Table, DataTable | TanStack React Table |
-| Dialog, Sheet | Radix Dialog / Sheet |
-| Accordion | Radix Accordion |
-| ResizablePanels | `react-resizable-panels` |
-| Toast | Sonner |
-| Chart | Recharts wrapper |
-| Form | React Hook Form |
+| Component        | Source                   |
+| ---------------- | ------------------------ |
+| Table, DataTable | TanStack React Table     |
+| Dialog, Sheet    | Radix Dialog / Sheet     |
+| Accordion        | Radix Accordion          |
+| ResizablePanels  | `react-resizable-panels` |
+| Toast            | Sonner                   |
+| Chart            | Recharts wrapper         |
+| Form             | React Hook Form          |
 
 **Tailwind CSS v4** with theme tokens from `@toeverything/theme`. Dark mode via `.dark` class.
 
 **`cn()` helper:**
 
 ```typescript
-import { cn } from '../utils'
+import { cn } from '../utils';
 // cn('base-class', condition && 'extra', variantMap[variant])
 // Uses clsx + tailwind-merge to avoid class conflicts
 ```
@@ -200,7 +201,7 @@ import { cn } from '../utils'
 
 Three-panel resizable layout (desktop). On mobile (`< 768px`) the left sidebar collapses to a drawer.
 
-```
+```text
 ┌─ Header ────────────────────────────────────┐
 │ Left Nav │   Main Content   │  Right Panel  │
 │ (fixed)  │  (scrollable)    │  (collapsible)│

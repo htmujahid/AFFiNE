@@ -4,20 +4,20 @@ The core infrastructure package for AFFiNE's frontend. Every service, store, and
 
 ## What's inside
 
-| Subdirectory | Purpose | Deep-dive |
-|---|---|---|
+| Subdirectory     | Purpose                                                                                     | Deep-dive                                      |
+| ---------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | `src/framework/` | Dependency injection container — `Framework`, `Service`, `Store`, `Entity`, `Scope`, events | [framework/CLAUDE.md](src/framework/CLAUDE.md) |
-| `src/livedata/` | `LiveData<T>` reactive primitive, `useLiveData` hook, `effect()`, RxJS operators | [livedata/CLAUDE.md](src/livedata/CLAUDE.md) |
-| `src/orm/` | Yjs-backed typed ORM (`createORMClient`, `f`, `t`, `YjsDBAdapter`) | [orm/CLAUDE.md](src/orm/CLAUDE.md) |
-| `src/op/` | RPC layer for Worker / SharedWorker / BroadcastChannel (`OpClient`, `OpConsumer`) | [op/CLAUDE.md](src/op/CLAUDE.md) |
-| `src/storage/` | `Memento` key-value storage interface + `MemoryMemento` + `wrapMemento` | [storage/CLAUDE.md](src/storage/CLAUDE.md) |
-| `src/atom/` | Jotai root store access (`getCurrentStore`) | [atom/CLAUDE.md](src/atom/CLAUDE.md) |
-| `src/media/` | Media query type helpers | [media/CLAUDE.md](src/media/CLAUDE.md) |
-| `src/utils/` | Shared utilities: async-lock, async-queue, object-pool, yjs-observable, etc. | [utils/CLAUDE.md](src/utils/CLAUDE.md) |
+| `src/livedata/`  | `LiveData<T>` reactive primitive, `useLiveData` hook, `effect()`, RxJS operators            | [livedata/CLAUDE.md](src/livedata/CLAUDE.md)   |
+| `src/orm/`       | Yjs-backed typed ORM (`createORMClient`, `f`, `t`, `YjsDBAdapter`)                          | [orm/CLAUDE.md](src/orm/CLAUDE.md)             |
+| `src/op/`        | RPC layer for Worker / SharedWorker / BroadcastChannel (`OpClient`, `OpConsumer`)           | [op/CLAUDE.md](src/op/CLAUDE.md)               |
+| `src/storage/`   | `Memento` key-value storage interface + `MemoryMemento` + `wrapMemento`                     | [storage/CLAUDE.md](src/storage/CLAUDE.md)     |
+| `src/atom/`      | Jotai root store access (`getCurrentStore`)                                                 | [atom/CLAUDE.md](src/atom/CLAUDE.md)           |
+| `src/media/`     | Media query type helpers                                                                    | [media/CLAUDE.md](src/media/CLAUDE.md)         |
+| `src/utils/`     | Shared utilities: async-lock, async-queue, object-pool, yjs-observable, etc.                | [utils/CLAUDE.md](src/utils/CLAUDE.md)         |
 
 ## Export paths
 
-```
+```text
 @toeverything/infra          → src/index.ts  (re-exports everything below)
 @toeverything/infra/op       → src/op/index.ts
 @toeverything/infra/storage  → src/storage/index.ts
@@ -28,7 +28,7 @@ The core infrastructure package for AFFiNE's frontend. Every service, store, and
 
 ## Mental model
 
-```
+```text
 Framework (registry)
   └── FrameworkProvider (runtime resolver)
         ├── Service / Store  — singletons, cached per provider
@@ -49,7 +49,9 @@ Op           — typed RPC over Worker/SharedWorker/BroadcastChannel
 export class AuthService extends Service {
   readonly session$ = new LiveData<Session | null>(null);
 
-  constructor(private readonly store: UserStore) { super(); }
+  constructor(private readonly store: UserStore) {
+    super();
+  }
 }
 
 // 2. Register in the framework

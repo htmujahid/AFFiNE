@@ -4,7 +4,7 @@ The browser-based AFFiNE web application (`app.affine.pro`). A pure-browser Reac
 
 ## Layout
 
-```
+```text
 src/
   index.tsx          # Entry point — StrictMode + Telemetry wrapper
   app.tsx            # Root component — Framework setup, StoreManagerClient, routing
@@ -16,7 +16,7 @@ src/
 
 ## Entry flow
 
-```
+```text
 index.tsx
   └── setup.ts            (browser bootstrap — environment init, stale state cleanup)
   └── <App />
@@ -37,9 +37,9 @@ index.tsx
 Sets up the full DI framework with browser-specific module configuration:
 
 ```typescript
-configureCommonModules(framework)           // shared services (auth, docs, workspace, etc.)
-configureBrowserWorkbenchModule(framework)  // browser workbench (tabs, navigation)
-configureLocalStorageStateStorageImpls(framework) // localStorage-backed Memento
+configureCommonModules(framework); // shared services (auth, docs, workspace, etc.)
+configureBrowserWorkbenchModule(framework); // browser workbench (tabs, navigation)
+configureLocalStorageStateStorageImpls(framework); // localStorage-backed Memento
 ```
 
 Wraps the app in `FrameworkRoot` to make all services available via `useService()`.
@@ -52,12 +52,12 @@ Runs nbstore's `StoreManager` in a `SharedWorker` (falls back to `Worker`). All 
 
 ## Module configuration
 
-| Module | Browser implementation |
-|---|---|
-| Workbench | `BrowserWorkbenchModule` (React Router tabs) |
-| State storage | `LocalStorageStateStorageModule` |
-| Blob | `IndexedDBBlobModule` |
-| Doc sync | `BroadcastChannel` + cloud |
+| Module        | Browser implementation                       |
+| ------------- | -------------------------------------------- |
+| Workbench     | `BrowserWorkbenchModule` (React Router tabs) |
+| State storage | `LocalStorageStateStorageModule`             |
+| Blob          | `IndexedDBBlobModule`                        |
+| Doc sync      | `BroadcastChannel` + cloud                   |
 
 ---
 

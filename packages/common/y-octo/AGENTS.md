@@ -4,14 +4,14 @@ High-performance, thread-safe Rust implementation of the Yjs CRDT protocol. Wire
 
 ## What's inside
 
-| Crate | Purpose | Deep-dive |
-|---|---|---|
-| `core/` | `y-octo` — the CRDT library: Doc, Text, Array, Map, XML types, codec, sync protocol | [core/CLAUDE.md](core/CLAUDE.md) |
+| Crate    | Purpose                                                                             | Deep-dive                          |
+| -------- | ----------------------------------------------------------------------------------- | ---------------------------------- |
+| `core/`  | `y-octo` — the CRDT library: Doc, Text, Array, Map, XML types, codec, sync protocol | [core/CLAUDE.md](core/CLAUDE.md)   |
 | `utils/` | `y-octo-utils` — test utilities, fuzzing framework, `doc_merger` binary, benchmarks | [utils/CLAUDE.md](utils/CLAUDE.md) |
 
 ## Mental model
 
-```
+```text
 Doc  (thread-safe, Arc<RwLock<DocStore>>)
   ├── Text   (insert/remove/delta, attributes)
   ├── Array  (insert/push/remove/iter)

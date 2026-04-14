@@ -4,7 +4,7 @@ Declarative route definitions + code generation for type-safe path building acro
 
 ## Layout
 
-```
+```text
 routes.json          # Source of truth — declarative route tree
 schema.json          # JSON Schema that validates routes.json
 build.ts             # Codegen: routes.json → src/routes.ts
@@ -46,6 +46,7 @@ yarn build   # routes.json → src/routes.ts
 ```
 
 The build script:
+
 1. Reads and validates `routes.json` against `schema.json`
 2. Recursively walks the route tree
 3. Uses `path-to-regexp` to extract typed parameters from each route segment
@@ -62,14 +63,14 @@ Never edit `src/routes.ts` manually — it is fully regenerated on every build.
 Chainable factory functions. Call the leaf factory with the required params to get a URL string:
 
 ```typescript
-import { FACTORIES } from '@affine/routes'
+import { FACTORIES } from '@affine/routes';
 
 // Navigate to admin settings for a specific module
-const path = FACTORIES.admin.settings.module({ module: 'auth' })
+const path = FACTORIES.admin.settings.module({ module: 'auth' });
 // → '/admin/settings/auth'
 
 // Segments without params are called with no arguments
-const path = FACTORIES.admin()
+const path = FACTORIES.admin();
 // → '/admin'
 ```
 
@@ -102,10 +103,10 @@ import { RELATIVE_ROUTES } from '@affine/routes'
 Interface that maps each parameterised route to its param shape. Use with React Router's `useParams()`:
 
 ```typescript
-import type { RouteParamsTypes } from '@affine/routes'
+import type { RouteParamsTypes } from '@affine/routes';
 
 // In a component rendered under /admin/settings/:module
-const { module } = useParams<RouteParamsTypes['admin.settings']>()
+const { module } = useParams<RouteParamsTypes['admin.settings']>();
 //  module is typed as string
 ```
 

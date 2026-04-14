@@ -4,7 +4,7 @@ Pre-built template assets for the AFFiNE editor. Provides edgeless workspace tem
 
 ## Layout
 
-```
+```text
 edgeless-snapshot/     # Source ZIPs — BlockSuite workspace snapshots (by category)
   Brainstorming/
   Marketing/
@@ -31,8 +31,8 @@ package.json
 ## Export paths
 
 ```typescript
-import { builtInTemplates } from '@affine/templates/edgeless'  // edgeless workspace templates
-import { builtInTemplates } from '@affine/templates/stickers'  // sticker packs
+import { builtInTemplates } from '@affine/templates/edgeless'; // edgeless workspace templates
+import { builtInTemplates } from '@affine/templates/stickers'; // sticker packs
 // onboarding.zip available as a static asset
 ```
 
@@ -59,24 +59,24 @@ const builtInTemplates = {
 
 ```typescript
 type EdgelessTemplate = {
-  name: string
-  type: 'template'
-  preview: string         // SVG string (thumbnail shown in picker)
-  content: object         // BlockSuite snapshot JSON (applied on insert)
-}
+  name: string;
+  type: 'template';
+  preview: string; // SVG string (thumbnail shown in picker)
+  content: object; // BlockSuite snapshot JSON (applied on insert)
+};
 ```
 
 ### Sticker shape
 
 ```typescript
 type Sticker = {
-  name: string
-  type: 'sticker'
-  cover: string           // SVG import (shown in picker)
-  content: string         // SVG import (inserted into canvas)
-  hash: string            // base64 SHA256 of content (for deduplication)
-  assets: {}
-}
+  name: string;
+  type: 'sticker';
+  cover: string; // SVG import (shown in picker)
+  content: string; // SVG import (inserted into canvas)
+  hash: string; // base64 SHA256 of content (for deduplication)
+  assets: {};
+};
 ```
 
 ---
@@ -146,13 +146,13 @@ Per README: export workspace pages as ZIP → unzip → place JSON files in `onb
 The `_common/setup.ts` in the blocksuite playground (and the core template extension) calls:
 
 ```typescript
-import { builtInTemplates } from '@affine/templates/edgeless'
+import { builtInTemplates } from '@affine/templates/edgeless';
 
 // Register with BlockSuite's template manager
-setupEdgelessTemplate(builtInTemplates)
+setupEdgelessTemplate(builtInTemplates);
 
 // Query in the template picker UI
-const categories = await builtInTemplates.categories()
-const results = await builtInTemplates.search('marketing')
-const templates = await builtInTemplates.list('Presentation')
+const categories = await builtInTemplates.categories();
+const results = await builtInTemplates.search('marketing');
+const templates = await builtInTemplates.list('Presentation');
 ```

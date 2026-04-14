@@ -4,7 +4,7 @@ Type-safe analytics and telemetry for AFFiNE. Provides a hierarchical event mode
 
 ## Layout
 
-```
+```text
 src/
   index.ts        # Public API barrel
   events.ts       # Complete event taxonomy (source of truth for all trackable events)
@@ -21,13 +21,13 @@ src/
 ## Explicit event tracking
 
 ```typescript
-import { track } from '@affine/track'
+import { track } from '@affine/track';
 
 // Hierarchical call chain: track.<page>.<segment>.<module>.<event>(args?)
-track.$.$.$.createWorkspace({ flavour: 'local' })
-track.allDocs.list.doc.openDoc()
-track.doc.editor.toolbar.bold()
-track.workspace.$.paywall.$.upgrade({ plan: 'pro', recurring: 'yearly' })
+track.$.$.$.createWorkspace({ flavour: 'local' });
+track.allDocs.list.doc.openDoc();
+track.doc.editor.toolbar.bold();
+track.workspace.$.paywall.$.upgrade({ plan: 'pro', recurring: 'yearly' });
 ```
 
 `$` means "global / any" — use it when a segment or module doesn't apply. TypeScript enforces the hierarchy and argument shapes from `events.ts`.
@@ -43,27 +43,20 @@ Attach tracking to any HTML element via `data-event-props` without writing JavaS
 <button data-event-props="allDocs.list.docMenu.deleteDoc">Delete</button>
 
 <!-- With a single arg -->
-<button
-  data-event-props="$.$.$.checkout"
-  data-event-arg="pro"
->Checkout</button>
+<button data-event-props="$.$.$.checkout" data-event-arg="pro">Checkout</button>
 
 <!-- With multiple typed args -->
-<button
-  data-event-props="$.$.$.upgrade"
-  data-event-args-plan="pro"
-  data-event-args-recurring="yearly"
->Upgrade</button>
+<button data-event-props="$.$.$.upgrade" data-event-args-plan="pro" data-event-args-recurring="yearly">Upgrade</button>
 ```
 
 Enable the listener once at app startup:
 
 ```typescript
-import { enableAutoTrack } from '@affine/track'
+import { enableAutoTrack } from '@affine/track';
 
 enableAutoTrack(document.body, (eventName, props) => {
   // forward to your analytics backend
-})
+});
 ```
 
 `enableAutoTrack` adds a single click listener to `root` that walks up the DOM looking for `data-event-props`, parses the event path, and calls the track function.
@@ -74,21 +67,21 @@ enableAutoTrack(document.body, (eventName, props) => {
 
 Events are organised in a 4-level hierarchy. Top-level pages (~20):
 
-| Page | Description |
-|---|---|
-| `$` | Global events (no specific page) |
-| `doc` | Document editor |
-| `edgeless` | Edgeless/canvas editor |
-| `workspace` | Workspace-level actions |
-| `allDocs` | All documents list |
-| `collection` | Collection view |
-| `tag` | Tag view |
-| `trash` | Trash view |
-| `menubarApp` | Desktop menubar app |
-| `popup` | Popup windows |
-| `clipper` | Web clipper |
-| `applyModel` | AI model selection |
-| … | (100+ distinct events total) |
+| Page         | Description                      |
+| ------------ | -------------------------------- |
+| `$`          | Global events (no specific page) |
+| `doc`        | Document editor                  |
+| `edgeless`   | Edgeless/canvas editor           |
+| `workspace`  | Workspace-level actions          |
+| `allDocs`    | All documents list               |
+| `collection` | Collection view                  |
+| `tag`        | Tag view                         |
+| `trash`      | Trash view                       |
+| `menubarApp` | Desktop menubar app              |
+| `popup`      | Popup windows                    |
+| `clipper`    | Web clipper                      |
+| `applyModel` | AI model selection               |
+| …            | (100+ distinct events total)     |
 
 Event categories include: workspace/doc lifecycle, auth, sharing, payments, integrations, comments, AI features, import/export, settings, search, onboarding.
 
@@ -97,45 +90,45 @@ Event categories include: workspace/doc lifecycle, auth, sharing, payments, inte
 ## Session management (`tracker.ts`, `state.ts`)
 
 ```typescript
-import { tracker } from '@affine/track'
+import { tracker } from '@affine/track';
 
 // Associate events with a user
-tracker.identify(userId)
+tracker.identify(userId);
 
 // Set persistent user properties (sent with every event)
-tracker.register({ role: 'admin', planType: 'pro' })
+tracker.register({ role: 'admin', planType: 'pro' });
 
 // Set user profile properties (one-time metadata)
-tracker.people.set({ email: 'user@example.com' })
+tracker.people.set({ email: 'user@example.com' });
 
 // Transform all events through a middleware
 tracker.middleware((eventName, props) => ({
   ...props,
   appVersion: BUILD_CONFIG.appVersion,
-}))
+}));
 
 // GDPR opt-out
-tracker.opt_out_tracking()
-tracker.opt_in_tracking()
+tracker.opt_out_tracking();
+tracker.opt_in_tracking();
 ```
 
 ### Automatic lifecycle events
 
-| Event | When |
-|---|---|
-| `first_visit` | Once per client (stored in localStorage) |
-| `session_start` | Once per session |
+| Event             | When                                                    |
+| ----------------- | ------------------------------------------------------- |
+| `first_visit`     | Once per client (stored in localStorage)                |
+| `session_start`   | Once per session                                        |
 | `user_engagement` | On `visibilitychange` (includes `engagement_time_msec`) |
 
 **Session timeout:** 30 minutes of inactivity → new session (increments `sessionNumber` in localStorage).
 
 ### State persistence
 
-| Data | Storage |
-|---|---|
-| `clientId` (nanoid) | `localStorage` — permanent |
-| `sessionNumber` | `localStorage` — increments per session |
-| `sessionId` | `sessionStorage` — cleared on tab close |
+| Data                | Storage                                 |
+| ------------------- | --------------------------------------- |
+| `clientId` (nanoid) | `localStorage` — permanent              |
+| `sessionNumber`     | `localStorage` — increments per session |
+| `sessionId`         | `sessionStorage` — cleared on tab close |
 
 ---
 
@@ -144,17 +137,25 @@ tracker.opt_in_tracking()
 The transport layer is pluggable — connect your analytics backend:
 
 ```typescript
-import { setTelemetryTransport, setTelemetryContext } from '@affine/track'
+import { setTelemetryTransport, setTelemetryContext } from '@affine/track';
 
 // Implement the transport interface
 const myTransport: TelemetryTransport = {
-  setContext(ctx: TelemetryContext): void { /* store context */ },
-  track(event: TelemetryEvent): void { /* send to backend */ },
-  pageview(event: TelemetryEvent): void { /* send pageview */ },
-  flush(): Promise<void> { /* flush queued events */ },
-}
+  setContext(ctx: TelemetryContext): void {
+    /* store context */
+  },
+  track(event: TelemetryEvent): void {
+    /* send to backend */
+  },
+  pageview(event: TelemetryEvent): void {
+    /* send pageview */
+  },
+  flush(): Promise<void> {
+    /* flush queued events */
+  },
+};
 
-setTelemetryTransport(myTransport)
+setTelemetryTransport(myTransport);
 
 // Set context (call after auth state changes)
 setTelemetryContext({
@@ -162,7 +163,7 @@ setTelemetryContext({
   channel: 'stable',
   userId: currentUserId,
   endpoint: 'https://telemetry.affine.pro',
-})
+});
 ```
 
 Events are **queued in memory** (max 500) if no transport is set, and flushed when one is registered. Call `flushTelemetry()` to force-flush.
@@ -171,14 +172,14 @@ Events are **queued in memory** (max 500) if no transport is set, and flushed wh
 
 ```typescript
 type TelemetryEvent = {
-  schemaVersion: string
-  eventName: string        // e.g. "$.cmdk.general.copyShareLink"
-  params: EventProps       // { page, segment, module, control, type, category, id, arg }
-  userId?: string
-  clientId: string
-  sessionId: string
-  context: TelemetryContext
-}
+  schemaVersion: string;
+  eventName: string; // e.g. "$.cmdk.general.copyShareLink"
+  params: EventProps; // { page, segment, module, control, type, category, id, arg }
+  userId?: string;
+  clientId: string;
+  sessionId: string;
+  context: TelemetryContext;
+};
 ```
 
 ---
@@ -186,10 +187,10 @@ type TelemetryEvent = {
 ## Sentry integration (`sentry.ts`)
 
 ```typescript
-import { sentry } from '@affine/track'
+import { sentry } from '@affine/track';
 
 // Initialize (called once at app startup, reads DSN from BUILD_CONFIG)
-sentry.init()
+sentry.init();
 
 // Captures: unhandled errors, React component errors
 // Tags: distribution, appVersion, editorVersion
@@ -202,18 +203,16 @@ sentry.init()
 
 ```typescript
 import {
-  track,              // Callable event chain proxy
-  enableAutoTrack,    // DOM click listener for data-event-props
-  tracker,            // Session + identity management
-  sentry,             // Sentry wrapper
-
-  setTelemetryTransport,  // Register analytics backend
-  setTelemetryContext,    // Update auth/channel context
-  flushTelemetry,         // Force-flush event queue
-
-  type EventArgs,     // Typed args per event (from events.ts)
-  type Events,        // Full event taxonomy type
-} from '@affine/track'
+  track, // Callable event chain proxy
+  enableAutoTrack, // DOM click listener for data-event-props
+  tracker, // Session + identity management
+  sentry, // Sentry wrapper
+  setTelemetryTransport, // Register analytics backend
+  setTelemetryContext, // Update auth/channel context
+  flushTelemetry, // Force-flush event queue
+  type EventArgs, // Typed args per event (from events.ts)
+  type Events, // Full event taxonomy type
+} from '@affine/track';
 ```
 
 ---

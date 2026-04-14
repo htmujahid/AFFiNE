@@ -4,7 +4,7 @@ Full-stack development playground for testing AFFiNE's native audio capture APIs
 
 ## Layout
 
-```
+```text
 web/                        # React frontend (Vite, port 5173 → proxied to 6544)
   main.tsx                  # React entry
   app.tsx                   # 3-pane layout
@@ -42,6 +42,7 @@ yarn dev:web      # Vite dev server (proxies /api → port 6544)
 ```
 
 Requires:
+
 - macOS (native audio capture via `@affine/native` uses macOS ScreenCaptureKit)
 - `GOOGLE_API_KEY` env var (Gemini API key) for transcription
 
@@ -49,7 +50,7 @@ Requires:
 
 ## Architecture
 
-```
+```text
 React UI (Socket.IO client + SWR subscriptions)
   │
   ├── /api/*  (REST — record, stop, transcribe, delete)
@@ -68,18 +69,18 @@ React UI (Socket.IO client + SWR subscriptions)
 
 ## REST API
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/apps` | List all running capturable apps |
-| `POST` | `/apps/:pid/record` | Start recording app by process ID |
-| `POST` | `/apps/:pid/stop` | Stop recording app |
-| `GET` | `/apps/:pid/icon` | App icon (PNG) |
-| `GET` | `/apps/saved` | List saved recording folders |
-| `DELETE` | `/recordings/:folder` | Delete a recording folder |
-| `POST` | `/recordings/:folder/transcribe` | Trigger Gemini transcription |
-| `POST` | `/global/record` | Start system-wide audio capture |
-| `POST` | `/global/stop` | Stop system-wide audio capture |
-| `POST` | `/transcribe` | Upload a WAV file and transcribe (multipart) |
+| Method   | Path                             | Description                                  |
+| -------- | -------------------------------- | -------------------------------------------- |
+| `GET`    | `/apps`                          | List all running capturable apps             |
+| `POST`   | `/apps/:pid/record`              | Start recording app by process ID            |
+| `POST`   | `/apps/:pid/stop`                | Stop recording app                           |
+| `GET`    | `/apps/:pid/icon`                | App icon (PNG)                               |
+| `GET`    | `/apps/saved`                    | List saved recording folders                 |
+| `DELETE` | `/recordings/:folder`            | Delete a recording folder                    |
+| `POST`   | `/recordings/:folder/transcribe` | Trigger Gemini transcription                 |
+| `POST`   | `/global/record`                 | Start system-wide audio capture              |
+| `POST`   | `/global/stop`                   | Stop system-wide audio capture               |
+| `POST`   | `/transcribe`                    | Upload a WAV file and transcribe (multipart) |
 
 Process ID `-1` means global system audio.
 
@@ -89,14 +90,14 @@ Process ID `-1` means global system audio.
 
 All events are server → client broadcasts.
 
-| Event | Payload | Description |
-|---|---|---|
-| `apps:all` | `AppInfo[]` | Full list of running apps (re-sent on change) |
-| `apps:state-changed` | `{ processId, state }` | App started or stopped |
-| `apps:recording` | `{ processId, duration }[]` | Active recordings + elapsed seconds |
-| `apps:saved` | `SavedRecording[]` | All saved recordings (re-sent on filesystem change) |
-| `apps:recording-transcription-start` | `{ folder }` | Gemini processing started |
-| `apps:recording-transcription-end` | `{ folder, error? }` | Gemini done (or failed) |
+| Event                                | Payload                     | Description                                         |
+| ------------------------------------ | --------------------------- | --------------------------------------------------- |
+| `apps:all`                           | `AppInfo[]`                 | Full list of running apps (re-sent on change)       |
+| `apps:state-changed`                 | `{ processId, state }`      | App started or stopped                              |
+| `apps:recording`                     | `{ processId, duration }[]` | Active recordings + elapsed seconds                 |
+| `apps:saved`                         | `SavedRecording[]`          | All saved recordings (re-sent on filesystem change) |
+| `apps:recording-transcription-start` | `{ folder }`                | Gemini processing started                           |
+| `apps:recording-transcription-end`   | `{ folder, error? }`        | Gemini done (or failed)                             |
 
 ---
 
@@ -104,7 +105,7 @@ All events are server → client broadcasts.
 
 Each recording is saved to `recordings/<bundleId>-<processId>-<timestamp>/`:
 
-```
+```text
 recordings/
   com.apple.Music-1234-1713000000/
     recording.wav          # Full-quality Float32 → int16 PCM WAV
@@ -120,7 +121,7 @@ recordings/
 
 ```typescript
 // Converts Float32Array samples to a WAV Blob (browser) or Buffer (Node)
-function encodeWav(samples: Float32Array, sampleRate: number, channels: number): Buffer
+function encodeWav(samples: Float32Array, sampleRate: number, channels: number): Buffer;
 
 // WAV format: RIFF header + fmt chunk + data chunk
 // Sample conversion: float32 [-1, 1] → int16 [-32768, 32767]
@@ -133,18 +134,18 @@ function encodeWav(samples: Float32Array, sampleRate: number, channels: number):
 ```typescript
 // Upload a WAV file to Gemini File Manager, transcribe with speaker diarization,
 // then summarize into a title + markdown summary.
-async function transcribeAudio(wavPath: string): Promise<TranscriptionResult>
+async function transcribeAudio(wavPath: string): Promise<TranscriptionResult>;
 
 type TranscriptionResult = {
   segments: Array<{
-    speaker: string    // "Speaker 1", "Speaker 2", etc.
-    start: string      // "MM:SS"
-    end: string        // "MM:SS"
-    text: string
-  }>
-  title: string        // Auto-generated session title
-  summary: string      // Markdown summary
-}
+    speaker: string; // "Speaker 1", "Speaker 2", etc.
+    start: string; // "MM:SS"
+    end: string; // "MM:SS"
+    text: string;
+  }>;
+  title: string; // Auto-generated session title
+  summary: string; // Markdown summary
+};
 ```
 
 Models used: `gemini-2.5-flash` (transcription), `gemini-2.5-pro` (summary). Files are deleted from Gemini File Manager after processing.
@@ -153,7 +154,7 @@ Models used: `gemini-2.5-flash` (transcription), `gemini-2.5-pro` (summary). Fil
 
 ## UI layout
 
-```
+```text
 ┌─ Left pane ─────────────────┐  ┌─ Right pane ──────────────────────────────┐
 │ [● Record System Audio]     │  │ Saved Recordings                          │
 │                             │  │                                           │

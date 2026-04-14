@@ -4,7 +4,7 @@ NestJS server that powers AFFiNE Cloud and self-hosted deployments. Exposes a Gr
 
 ## Layout
 
-```
+```text
 src/
   index.ts          # Entry: routes to server.ts (HTTP) or cli.ts (script flavor)
   prelude.ts        # Boot sequence: load .env files, init global `env`
@@ -89,21 +89,21 @@ src/
 
 Flavors are set via `SERVER_FLAVOR` env. `allinone` (default) enables everything.
 
-| Flavor | Loads |
-|---|---|
-| `allinone` | Everything |
-| `graphql` | GqlModule + all core/plugin resolvers |
-| `sync` | SyncModule + TelemetryModule |
-| `renderer` | DocRendererModule |
-| `doc` | DocServiceModule + IndexerModule |
-| `front` | Renderer + Sync + DocService + StaticFileModule |
-| `script` | Only FunctionalityModules — runs CLI data migrations |
+| Flavor     | Loads                                                |
+| ---------- | ---------------------------------------------------- |
+| `allinone` | Everything                                           |
+| `graphql`  | GqlModule + all core/plugin resolvers                |
+| `sync`     | SyncModule + TelemetryModule                         |
+| `renderer` | DocRendererModule                                    |
+| `doc`      | DocServiceModule + IndexerModule                     |
+| `front`    | Renderer + Sync + DocService + StaticFileModule      |
+| `script`   | Only FunctionalityModules — runs CLI data migrations |
 
 The flavor-routing happens in `buildAppModule()` in `app.module.ts` using `AppModuleBuilder.useIf()`.
 
 ## Architecture Layers
 
-```
+```text
 plugins/  ──►  core/  ──►  models/  ──►  base/  ──►  Prisma / Redis / S3
 ```
 
@@ -115,6 +115,7 @@ plugins/  ──►  core/  ──►  models/  ──►  base/  ──►  Pri
 ## Models Layer
 
 All model classes extend `BaseModel` (`src/models/base.ts`), which provides:
+
 - `this.db` — the Prisma client (automatically transaction-aware via `nestjs-cls`)
 - `this.models` — the `Models` proxy giving cross-model access
 
@@ -206,15 +207,15 @@ yarn init             # prisma migrate dev + data-migration run
 
 ## Key Environment Variables
 
-| Variable | Default | Effect |
-|---|---|---|
-| `NODE_ENV` | `production` | `development` enables Swagger, disables shutdown hooks |
-| `SERVER_FLAVOR` | `allinone` | Which modules to load (see Flavors table) |
-| `AFFINE_ENV` | `production` | Namespace: `dev` \| `beta` \| `production` |
-| `DEPLOYMENT_TYPE` | auto | `affine` (cloud) or `selfhosted` |
-| `DEPLOYMENT_PLATFORM` | `unknown` | `gcp` enables GCloudModule |
-| `AFFINE_SERVER_EXTERNAL_URL` | — | Public-facing base URL (used for CORS, emails, links) |
-| `AFFINE_PRIVATE_KEY` | — | RSA private key for JWT signing |
-| `DATABASE_URL` | — | Prisma PostgreSQL connection string |
-| `REDIS_SERVER_HOST` | — | Redis host for cache, jobs, mutex |
-| `DEBUG` | — | `affine:*` for verbose logger output |
+| Variable                     | Default      | Effect                                                 |
+| ---------------------------- | ------------ | ------------------------------------------------------ |
+| `NODE_ENV`                   | `production` | `development` enables Swagger, disables shutdown hooks |
+| `SERVER_FLAVOR`              | `allinone`   | Which modules to load (see Flavors table)              |
+| `AFFINE_ENV`                 | `production` | Namespace: `dev` \| `beta` \| `production`             |
+| `DEPLOYMENT_TYPE`            | auto         | `affine` (cloud) or `selfhosted`                       |
+| `DEPLOYMENT_PLATFORM`        | `unknown`    | `gcp` enables GCloudModule                             |
+| `AFFINE_SERVER_EXTERNAL_URL` | —            | Public-facing base URL (used for CORS, emails, links)  |
+| `AFFINE_PRIVATE_KEY`         | —            | RSA private key for JWT signing                        |
+| `DATABASE_URL`               | —            | Prisma PostgreSQL connection string                    |
+| `REDIS_SERVER_HOST`          | —            | Redis host for cache, jobs, mutex                      |
+| `DEBUG`                      | —            | `affine:*` for verbose logger output                   |

@@ -4,7 +4,7 @@ Thin wrapper around the [`debug`](https://github.com/debug-js/debug) library. Pr
 
 ## Layout
 
-```
+```text
 src/
   index.ts          # DebugLogger class + browser auto-enable logic
   __tests__/
@@ -30,15 +30,15 @@ const childLogger = logger.namespace('sub-feature');
 // → namespace becomes 'affine:my-module:sub-feature'
 ```
 
-| Method | Description |
-|---|---|
-| `debug(message, ...args)` | Routes through `console.debug` |
-| `info(message, ...args)` | Routes through `console.info` |
-| `warn(message, ...args)` | Routes through `console.warn` |
-| `error(message, ...args)` | Routes through `console.error` |
-| `log(level, message, ...args)` | Base method — all above delegate here |
-| `namespace(extra)` | Returns a new `DebugLogger` with `:<extra>` appended to the namespace |
-| `enabled` (get/set) | Toggle this logger's output without affecting siblings |
+| Method                         | Description                                                           |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `debug(message, ...args)`      | Routes through `console.debug`                                        |
+| `info(message, ...args)`       | Routes through `console.info`                                         |
+| `warn(message, ...args)`       | Routes through `console.warn`                                         |
+| `error(message, ...args)`      | Routes through `console.error`                                        |
+| `log(level, message, ...args)` | Base method — all above delegate here                                 |
+| `namespace(extra)`             | Returns a new `DebugLogger` with `:<extra>` appended to the namespace |
+| `enabled` (get/set)            | Toggle this logger's output without affecting siblings                |
 
 ## Browser Auto-Enable
 
@@ -55,7 +55,7 @@ In non-browser environments (Node.js, Workers) the `debug` library's standard `D
 
 All AFFiNE loggers use the prefix `affine:` followed by a module path:
 
-```
+```text
 affine:core:workspace
 affine:sync:engine
 affine:editor:toolbar
@@ -63,7 +63,7 @@ affine:editor:toolbar
 
 This lets you filter selectively in browser DevTools or via the `DEBUG` env variable:
 
-```
+```text
 DEBUG=affine:sync:*   # only sync-related logs
 DEBUG=affine:*        # all AFFiNE logs
 DEBUG=*               # everything (very verbose)

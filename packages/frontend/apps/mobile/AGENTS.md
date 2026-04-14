@@ -4,7 +4,7 @@ Generic mobile web app entry point — the web-based mobile experience (PWA / mo
 
 ## Layout
 
-```
+```text
 src/
   index.tsx          # Entry point — StrictMode + Telemetry
   app.tsx            # Root component — Framework + mobile modules + routing
@@ -16,7 +16,7 @@ src/
 
 ## Entry flow
 
-```
+```text
 index.tsx
   └── setup.ts              (browser bootstrap + mobile stylesheet)
   └── <App />
@@ -36,10 +36,11 @@ index.tsx
 ## Mobile module configuration
 
 ```typescript
-configureMobileModules(framework)
+configureMobileModules(framework);
 ```
 
 Registers mobile-specific service implementations:
+
 - Mobile workbench (single-pane navigation instead of tabbed)
 - Touch gesture handlers
 - Mobile-optimized search and navigation
@@ -48,13 +49,13 @@ Registers mobile-specific service implementations:
 
 ## Key differences from `@affine/web`
 
-| Feature | `@affine/web` | `@affine/mobile` |
-|---|---|---|
-| Workbench module | `BrowserWorkbenchModule` | `MobileWorkbenchModule` |
-| Haptics | — | `HapticProvider` (Vibration API) |
-| Virtual keyboard | — | `VirtualKeyboardHandler` |
-| Stylesheet | default | `@affine/core/mobile/styles/mobile.css` |
-| Routes | desktop routes | mobile routes |
+| Feature          | `@affine/web`            | `@affine/mobile`                        |
+| ---------------- | ------------------------ | --------------------------------------- |
+| Workbench module | `BrowserWorkbenchModule` | `MobileWorkbenchModule`                 |
+| Haptics          | —                        | `HapticProvider` (Vibration API)        |
+| Virtual keyboard | —                        | `VirtualKeyboardHandler`                |
+| Stylesheet       | default                  | `@affine/core/mobile/styles/mobile.css` |
+| Routes           | desktop routes           | mobile routes                           |
 
 ---
 

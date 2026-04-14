@@ -4,7 +4,7 @@ AFFiNE's internationalization package. Wraps `i18next` + `react-i18next` with fu
 
 ## Layout
 
-```
+```text
 src/
   index.ts                    # Main barrel export
   react.ts                    # useI18n() React hook
@@ -30,30 +30,30 @@ cleanup.mjs                   # Removes unused translation keys from all locale 
 
 ## Supported languages (24)
 
-| Language | Code | RTL |
-|---|---|---|
-| English | `en` | — |
-| Simplified Chinese | `zh-Hans` | — |
-| Traditional Chinese | `zh-Hant` | — |
-| French | `fr` | — |
-| German | `de` | — |
-| Spanish | `es`, `es-AR`, `es-CL` | — |
-| Japanese | `ja` | — |
-| Korean | `ko` | — |
-| Russian | `ru` | — |
-| Italian | `it` | — |
-| Polish | `pl` | — |
-| Portuguese (Brazil) | `pt-BR` | — |
-| Ukrainian | `uk` | — |
-| Hindi | `hi` | — |
-| Swedish | `sv-SE` | — |
-| Danish | `da` | — |
-| Norwegian | `nb-NO` | — |
-| Greek | `el-GR` | — |
-| Catalan | `ca` | — |
-| Arabic | `ar` | ✓ |
-| Persian/Farsi | `fa` | ✓ |
-| Urdu | `ur` | ✓ |
+| Language            | Code                   | RTL |
+| ------------------- | ---------------------- | --- |
+| English             | `en`                   | —   |
+| Simplified Chinese  | `zh-Hans`              | —   |
+| Traditional Chinese | `zh-Hant`              | —   |
+| French              | `fr`                   | —   |
+| German              | `de`                   | —   |
+| Spanish             | `es`, `es-AR`, `es-CL` | —   |
+| Japanese            | `ja`                   | —   |
+| Korean              | `ko`                   | —   |
+| Russian             | `ru`                   | —   |
+| Italian             | `it`                   | —   |
+| Polish              | `pl`                   | —   |
+| Portuguese (Brazil) | `pt-BR`                | —   |
+| Ukrainian           | `uk`                   | —   |
+| Hindi               | `hi`                   | —   |
+| Swedish             | `sv-SE`                | —   |
+| Danish              | `da`                   | —   |
+| Norwegian           | `nb-NO`                | —   |
+| Greek               | `el-GR`                | —   |
+| Catalan             | `ca`                   | —   |
+| Arabic              | `ar`                   | ✓   |
+| Persian/Farsi       | `fa`                   | ✓   |
+| Urdu                | `ur`                   | ✓   |
 
 English is bundled. All other languages are **lazy-loaded** (code-split).
 
@@ -86,12 +86,12 @@ Fully typed — IDE autocompletes all valid keys. Invalid keys are compile error
 ### `I18n` — Singleton (outside React)
 
 ```typescript
-import { I18n } from '@affine/i18n'
+import { I18n } from '@affine/i18n';
 
 // Use in Services, utils, non-React code
-const label = I18n['com.affine.settings.workspace.properties.delete.title']()
-I18n.changeLanguage('de')
-I18n.language
+const label = I18n['com.affine.settings.workspace.properties.delete.title']();
+I18n.changeLanguage('de');
+I18n.language;
 ```
 
 ### `useAFFiNEI18N()` — Generated hook (auto-generated)
@@ -105,20 +105,20 @@ The codegen-produced hook in `src/i18n.gen.ts`. `useI18n()` wraps this — prefe
 Formats timestamps as human-readable strings, switching between relative and absolute formats.
 
 ```typescript
-import { i18nTime } from '@affine/i18n'
+import { i18nTime } from '@affine/i18n';
 
 // Relative time (auto-selects granularity)
-i18nTime(Date.now() - 30_000, { relative: true })    // → "30s ago"
-i18nTime(Date.now() - 120_000, { relative: true })   // → "2m ago"
-i18nTime(yesterday, { relative: true })               // → "yesterday"
-i18nTime(lastWeek, { relative: true })                // → "Oct 9"
+i18nTime(Date.now() - 30_000, { relative: true }); // → "30s ago"
+i18nTime(Date.now() - 120_000, { relative: true }); // → "2m ago"
+i18nTime(yesterday, { relative: true }); // → "yesterday"
+i18nTime(lastWeek, { relative: true }); // → "Oct 9"
 
 // Absolute time
-i18nTime(date, { absolute: { accuracy: 'minute' } })  // → "2024-10-10 13:30 PM"
-i18nTime(date, { absolute: { accuracy: 'day', noYear: true } }) // → "Oct 10"
+i18nTime(date, { absolute: { accuracy: 'minute' } }); // → "2024-10-10 13:30 PM"
+i18nTime(date, { absolute: { accuracy: 'day', noYear: true } }); // → "Oct 10"
 
 // Relative with fallback to absolute after max duration
-i18nTime(date, { relative: { max: [1, 'day'] } })
+i18nTime(date, { relative: { max: [1, 'day'] } });
 // Shows relative if < 1 day old, else shows absolute date
 
 // Input types: number (unix ms), string (ISO), Date
@@ -150,9 +150,9 @@ This updates `src/i18n.gen.ts` — the new keys are now typed.
 3. **Use in code:**
 
 ```typescript
-const i18n = useI18n()
-i18n['com.affine.my-feature.title']()
-i18n['com.affine.my-feature.description']({ action: 'sync', count: 3 })
+const i18n = useI18n();
+i18n['com.affine.my-feature.title']();
+i18n['com.affine.my-feature.description']({ action: 'sync', count: 3 });
 ```
 
 4. **Translations** are synced to the Tolgee platform automatically on merge to `develop`. Community translators add translations there, then they are pulled back via CI.
@@ -175,7 +175,7 @@ i18n['com.affine.my-feature.description']({ action: 'sync', count: 3 })
 Running `yarn build` executes 4 steps in sequence:
 
 1. **Error sync** — imports error name constants from `@affine/server` and adds `error.<ErrorName>` keys to `en.json`
-2. **Resource cleanup** *(optional)* — scans all frontend source files for referenced keys; removes unreferenced keys from all locale JSON files (skips payment modal keys)
+2. **Resource cleanup** _(optional)_ — scans all frontend source files for referenced keys; removes unreferenced keys from all locale JSON files (skips payment modal keys)
 3. **Codegen** — runs `@magic-works/i18n-codegen` on `en.json` → writes `src/i18n.gen.ts`
 4. **Completeness** — counts translated vs total keys per language → writes `src/i18n-completenesses.json`
 
@@ -229,22 +229,22 @@ node packages/frontend/i18n/cleanup.mjs
 
 ```typescript
 export type Language = {
-  name: string           // English name: "Simplified Chinese"
-  originalName: string   // Native: "简体中文"
-  flagEmoji: string      // "🇨🇳"
-  rtl?: boolean          // true for Arabic, Persian, Urdu
-  resource: LanguageResource | (() => Promise<{ default: LanguageResource }>)
+  name: string; // English name: "Simplified Chinese"
+  originalName: string; // Native: "简体中文"
+  flagEmoji: string; // "🇨🇳"
+  rtl?: boolean; // true for Arabic, Persian, Urdu
+  resource: LanguageResource | (() => Promise<{ default: LanguageResource }>);
   // English: inline object; all others: dynamic import
-}
+};
 
-export const SUPPORTED_LANGUAGES: Language[]
+export const SUPPORTED_LANGUAGES: Language[];
 ```
 
 ---
 
 ## Tolgee integration (translation workflow)
 
-```
+```text
 Developer adds key to en.json → merge to develop
   → CI action `languages-sync` → pushes keys to https://i18n.affine.pro
     → Community translators update translations on Tolgee
@@ -262,9 +262,9 @@ npm run download-resources  # pull all translations from Tolgee
 
 ```typescript
 // from '@affine/i18n'
-export { I18n, createI18nWrapper, getOrCreateI18n }   // core singleton
-export { useI18n, I18nextProvider, Trans, useTranslation } // React
-export { SUPPORTED_LANGUAGES, type Language }          // language registry
-export { i18nTime, type TimeUnit }                     // time utility
-export { i18nCompletenesses }                          // coverage data
+export { I18n, createI18nWrapper, getOrCreateI18n }; // core singleton
+export { useI18n, I18nextProvider, Trans, useTranslation }; // React
+export { SUPPORTED_LANGUAGES, type Language }; // language registry
+export { i18nTime, type TimeUnit }; // time utility
+export { i18nCompletenesses }; // coverage data
 ```

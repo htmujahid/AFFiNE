@@ -4,7 +4,7 @@ Rust crate that generates native bindings for iOS (Swift) and Android (Kotlin) v
 
 ## Layout
 
-```
+```text
 src/
   lib.rs             # Crate root — UniFFI exports, public API surface
   error.rs           # UniffiError enum (crosses FFI boundary)
@@ -192,6 +192,7 @@ Large blobs (> 1 MB, controlled by `MOBILE_PAYLOAD_INLINE_THRESHOLD_BYTES`) are 
 3. The JS side (`@affine/mobile-shared/nbstore/payload`) receives the `Blob.data` string from `get_blob()` and calls `decodePayload(data, MOBILE_BLOB_FILE_PREFIX)` to transparently handle both token and base64 cases.
 
 Cache directories:
+
 - **Android**: `<app>/cache/nbstore-blob-cache/<workspace_hash>/`
 - **iOS**: `<app_container>/Library/Caches/nbstore-blob-cache/<workspace_hash>/`
 
@@ -217,7 +218,7 @@ render_typst_preview_svg(code, font_dirs?, cache_dir?)
 
 Every workspace/userspace is identified by a `universal_id` string in the format from `@affine/nbstore`:
 
-```
+```text
 @peer(<peer>);@type(<workspace|userspace>);@id(<id>);
 ```
 
@@ -239,6 +240,7 @@ cargo run --bin uniffi-bindgen generate src/lib.rs --language kotlin --out-dir .
 ```
 
 Library outputs:
+
 - `libaffine_mobile_native.dylib` / `.a` (iOS)
 - `libaffine_mobile_native.so` / `.a` (Android)
 

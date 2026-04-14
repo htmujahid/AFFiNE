@@ -4,7 +4,7 @@ Electron desktop app — **main process only**. Handles window management, IPC, 
 
 ## Layout
 
-```
+```text
 src/
   main/                   # Electron main process
     index.ts              # App entry — lifecycle, security, single-instance, deep links
@@ -47,7 +47,7 @@ forge.config.mjs          # Electron Forge packaging config
 
 All IPC uses `async-call-rpc` over Electron's `ipcRenderer` / `ipcMain`. The pattern:
 
-```
+```text
 Renderer (React)
   └── window.apis.*           (exposed via preload/electron-api.ts)
         └── async-call-rpc RPC
@@ -57,20 +57,20 @@ Renderer (React)
 
 ### Main process handlers
 
-| Handler group | Namespace | Key operations |
-|---|---|---|
-| `ui` | `window` | createWindow, openExternal, toggleDevTools, setWindowSize, dialog |
-| `clipboard` | `clipboard` | readText, writeText, readFiles |
-| `config-storage` | `appConfig` | get, set, clear (persistent JSON file) |
-| `updater` | `updater` | checkForUpdates, downloadUpdate, installUpdate |
-| `recording` | `recording` | start, stop, getDevices |
-| `find-in-page` | `findInPage` | find, stopFind |
-| `worker` | `worker` | create, destroy |
-| `tray` | — | manages tray icon state |
-| `application-menu` | — | builds OS menu from i18n strings |
-| `windows-manager` | — | manages BrowserWindow lifecycle |
-| `shared-storage` | `sharedStorage` | get, set — cross-window key-value |
-| `power` | `power` | subscribe to power source changes |
+| Handler group      | Namespace       | Key operations                                                    |
+| ------------------ | --------------- | ----------------------------------------------------------------- |
+| `ui`               | `window`        | createWindow, openExternal, toggleDevTools, setWindowSize, dialog |
+| `clipboard`        | `clipboard`     | readText, writeText, readFiles                                    |
+| `config-storage`   | `appConfig`     | get, set, clear (persistent JSON file)                            |
+| `updater`          | `updater`       | checkForUpdates, downloadUpdate, installUpdate                    |
+| `recording`        | `recording`     | start, stop, getDevices                                           |
+| `find-in-page`     | `findInPage`    | find, stopFind                                                    |
+| `worker`           | `worker`        | create, destroy                                                   |
+| `tray`             | —               | manages tray icon state                                           |
+| `application-menu` | —               | builds OS menu from i18n strings                                  |
+| `windows-manager`  | —               | manages BrowserWindow lifecycle                                   |
+| `shared-storage`   | `sharedStorage` | get, set — cross-window key-value                                 |
+| `power`            | `power`         | subscribe to power source changes                                 |
 
 ### Preload (`src/preload/electron-api.ts`)
 
@@ -91,7 +91,7 @@ window.events = { ...EventEmitter subscriptions }
 
 A separate Node.js process spawned by the main process. Handles SQLite operations (via `@affine/nbstore/sqlite`) so that DB I/O never blocks the main process.
 
-```
+```text
 helper/nbstore/
   v1/          # Legacy v1 API adapter
   index.ts     # Current adapter
@@ -114,6 +114,7 @@ The helper exposes an RPC surface (`helper/exposed.ts`) consumed by the main pro
 ```
 
 Additional security in `main/index.ts`:
+
 - Permission request handler (blocks all except: clipboard, media, display-capture)
 - `will-navigate` guard (prevents navigating outside allowed origins)
 - `new-window` → open in OS browser
@@ -133,7 +134,7 @@ On macOS: `open-url` event. On Windows/Linux: second instance args. Both route t
 
 ```typescript
 if (!app.requestSingleInstanceLock()) {
-  app.quit()  // second instance → focus first, quit self
+  app.quit(); // second instance → focus first, quit self
 }
 ```
 
@@ -149,14 +150,14 @@ Uses `electron-updater`. Checks for updates on startup (production only). Expose
 
 Electron Forge with makers:
 
-| Platform | Format | Maker |
-|---|---|---|
-| Windows | Squirrel installer | `@electron-forge/maker-squirrel` |
-| Windows | NSIS installer | `electron-forge-maker-nsis` |
-| macOS | DMG | `@electron-forge/maker-dmg` |
-| Linux | .deb | `@electron-forge/maker-deb` |
-| Linux | Flatpak | `@electron-forge/maker-flatpak` |
-| All | .zip | `@electron-forge/maker-zip` |
+| Platform | Format             | Maker                            |
+| -------- | ------------------ | -------------------------------- |
+| Windows  | Squirrel installer | `@electron-forge/maker-squirrel` |
+| Windows  | NSIS installer     | `electron-forge-maker-nsis`      |
+| macOS    | DMG                | `@electron-forge/maker-dmg`      |
+| Linux    | .deb               | `@electron-forge/maker-deb`      |
+| Linux    | Flatpak            | `@electron-forge/maker-flatpak`  |
+| All      | .zip               | `@electron-forge/maker-zip`      |
 
 ---
 
