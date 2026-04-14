@@ -124,14 +124,14 @@ All types that cross the FFI boundary. Binary data is always **base64-encoded st
 ```rust
 record DocRecord {
   doc_id: String
-  data: String       // base64 Yjs binary (snapshot)
+  bin: String        // base64 Yjs binary (snapshot)
   timestamp: i64     // ms since epoch
 }
 
 record DocUpdate {
   doc_id: String
   timestamp: i64
-  data: String       // base64 Yjs update binary
+  bin: String        // base64 Yjs update binary
 }
 
 record DocClock {

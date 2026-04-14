@@ -65,10 +65,28 @@ const bytes = await decodePayload(nativePayloadString, MOBILE_BLOB_FILE_PREFIX, 
 
 ### Security
 
-Path validation prevents path traversal attacks. Accepted patterns:
+Path validation prevents path traversal attacks. The validator checks the 4th path segment from the end (`parentDir`) against `MOBILE_PAYLOAD_PARENT_DIRS = {'cache', 'Caches', 'T', 'tmp'}`, then verifies the path root matches the expected platform layout for that entry.
 
-- **Android**: `/data/*/cache/` — matches `/data/data/<pkg>/cache/…`
-- **iOS**: `/var/*/Caches/` and `/private/var/tmp/`
+Accepted patterns:
+
+**Android** (`parentDir = cache`):
+
+- `/data/data/<pkg>/cache/nbstore-blob-cache/…` — standard single-user app cache
+- `/data/user/<uid>/<pkg>/cache/nbstore-blob-cache/…` — multi-user (secondary-user installs)
+
+**iOS** (`parentDir = Caches`):
+
+- `/var/…/Library/Caches/nbstore-blob-cache/…`
+- `/private/…/Library/Caches/nbstore-blob-cache/…`
+
+**iOS/macOS NSTemporaryDirectory** (`parentDir = T`):
+
+- `/var/folders/<xx>/<yy>/T/nbstore-blob-cache/…`
+
+**iOS/macOS tmp** (`parentDir = tmp`):
+
+- `/tmp/nbstore-blob-cache/…` (and deeper paths whose first segment is `tmp`)
+- `/private/var/tmp/nbstore-blob-cache/…` (and deeper paths under `/private/var/tmp/`)
 
 Any path outside these patterns is rejected.
 
